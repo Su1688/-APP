@@ -1,6 +1,7 @@
 const store = require("../../utils/store.js");
 const menu = require("../../utils/menu.js");
 const sync = require("../../utils/sync.js");
+const family = require("../../config/family.js");
 
 const SPICY_OPTIONS = ["不辣", "微辣", "中辣", "特辣"];
 const DISLIKE_OPTIONS = [
@@ -85,7 +86,15 @@ Page({
     if (!kitchen) {
       return "和 TA 配对后，菜单和订单会自动同步";
     }
-    return "邀请码 " + kitchen.code + " · " + kitchen.memberCount + "/2 台设备已连接";
+    return (
+      "邀请码 " +
+      kitchen.code +
+      " · " +
+      kitchen.memberCount +
+      "/" +
+      family.MAX_MEMBERS +
+      " 人已连接"
+    );
   },
 
   goPair() {

@@ -10,7 +10,9 @@ const COLL_ORDERS = "orders";
 const COLL_MENUS = "kitchen_menus";
 const COLL_PROFILES = "kitchen_profiles";
 
-const MAX_MEMBERS = 2;
+// 一个家最多几个人（按微信号算，不是设备）
+// ⚠️ 前端 config/family.js 里的 MAX_MEMBERS 要和这里保持一致
+const MAX_MEMBERS = 4;
 const ORDER_LIMIT = 100;
 const MAX_ITEMS = 30;
 const MAX_COUNT_PER_ITEM = 9;

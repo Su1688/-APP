@@ -1,4 +1,5 @@
 const sync = require("../../utils/sync.js");
+const family = require("../../config/family.js");
 
 const ERROR_TEXT = {
   NOT_FOUND: "没有找到这个邀请码，再核对一下",
@@ -15,6 +16,8 @@ Page({
     cloudOn: false,
     loading: true,
     kitchen: null,
+    memberTip: "",
+    memberSlots: [],
     codeInput: "",
     busy: false
   },
@@ -28,12 +31,32 @@ Page({
     const cloudOn = sync.isCloudOn();
     this.setData({ cloudOn: cloudOn, loading: cloudOn });
     if (!cloudOn) {
-      this.setData({ loading: false, kitchen: sync.getKitchen() });
+      this.applyKitchen(sync.getKitchen());
+      this.setData({ loading: false });
       return;
     }
     sync.refreshPair().then(function (kitchen) {
-      self.setData({ kitchen: kitchen, loading: false });
+      self.applyKitchen(kitchen);
+      self.setData({ loading: false });
     });
+  },
+
+  // 小家人数、提示语、那一排头像格子都在这里算，容量只写在 config/family.js
+  applyKitchen(kitchen) {
+    const max = family.MAX_MEMBERS;
+    const count = kitchen ? kitchen.memberCount || 1 : 0;
+    const slots = [];
+    for (let i = 0; i < max; i++) {
+      slots.push(i < count);
+    }
+    let tip = "";
+    if (kitchen) {
+      tip =
+        count >= max
+          ? "小家满员了（" + max + " 人），点菜实时同步"
+          : count + "/" + max + " 人已连上，还能再拉 " + (max - count) + " 个人";
+    }
+    this.setData({ kitchen: kitchen || null, memberTip: tip, memberSlots: slots });
   },
 
   onCodeInput(e) {
@@ -49,7 +72,8 @@ Page({
     sync
       .createFamily()
       .then(function (kitchen) {
-        self.setData({ busy: false, kitchen: kitchen });
+        self.applyKitchen(kitchen);
+        self.setData({ busy: false });
         wx.showToast({ title: "小家建好啦", icon: "none" });
       })
       .catch(function (err) {
@@ -75,7 +99,8 @@ Page({
     sync
       .joinFamily(code)
       .then(function (kitchen) {
-        self.setData({ busy: false, kitchen: kitchen, codeInput: "" });
+        self.applyKitchen(kitchen);
+        self.setData({ busy: false, codeInput: "" });
         wx.showToast({ title: "加入成功 🎉", icon: "none" });
         return sync.pull(true);
       })
@@ -129,7 +154,8 @@ Page({
           return;
         }
         sync.leaveFamily().then(function () {
-          self.setData({ kitchen: null, codeInput: "" });
+          self.applyKitchen(null);
+          self.setData({ codeInput: "" });
           wx.showToast({ title: "已退出", icon: "none" });
         });
       }

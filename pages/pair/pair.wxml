@@ -16,7 +16,7 @@
         <view class="hero__emoji">🏡</view>
         <view class="hero__title">我们已经是一家人了</view>
         <view class="hero__sub">
-          {{kitchen.memberCount === 2 ? '两台设备已经连上，点菜实时同步' : '还差一个人，把邀请码发给 TA'}}
+          {{memberTip}}
         </view>
       </view>
 
@@ -28,15 +28,13 @@
       </view>
 
       <view class="members">
-        <view class="member">
-          <text class="member__emoji">🙋</text>
-          <text class="member__text">已连接</text>
-        </view>
-        <view class="members__line"></view>
-        <view class="member {{kitchen.memberCount === 2 ? '' : 'member--empty'}}">
-          <text class="member__emoji">{{kitchen.memberCount === 2 ? '🙋' : '➕'}}</text>
-          <text class="member__text">{{kitchen.memberCount === 2 ? '已连接' : '等 TA 加入'}}</text>
-        </view>
+        <block wx:for="{{memberSlots}}" wx:key="index">
+          <view wx:if="{{index > 0}}" class="members__line"></view>
+          <view class="member {{item ? '' : 'member--empty'}}">
+            <text class="member__emoji">{{item ? '🙋' : '➕'}}</text>
+            <text class="member__text">{{item ? '已连接' : '空位'}}</text>
+          </view>
+        </block>
       </view>
 
       <view class="sync-note">菜单、订单和口味偏好会自动同步；购物车和收藏是你自己的，不会同步。</view>
@@ -49,7 +47,7 @@
       <view class="hero">
         <view class="hero__emoji">🏡</view>
         <view class="hero__title">我们的小家</view>
-        <view class="hero__sub">两个人连上以后，她点的菜你这台手机也能看到</view>
+        <view class="hero__sub">几个人连上以后，她点的菜你这台手机也能看到</view>
       </view>
 
       <view class="card action">
