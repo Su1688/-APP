@@ -1,0 +1,21 @@
+.empty {
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+
+.empty__emoji {
+  font-size: 96rpx;
+  line-height: 1.2;
+}
+
+.empty__text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #9a8f8a;
+}
+
+.empty__hint {
+  margin-top: 10rpx;
+  font-size: 24rpx;
+  color: #bcb2ad;
+}

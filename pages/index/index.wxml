@@ -1,0 +1,139 @@
+<view class="page page--tabbar">
+  <view class="hero">
+    <view class="hero__text">
+      <view class="hero__greet">{{greet}}</view>
+      <view class="hero__title">今天想吃什么？</view>
+      <view class="hero__sub">{{heroSub}}</view>
+    </view>
+    <view class="hero__emoji">🍳</view>
+  </view>
+
+  <view class="search">
+    <text class="search__icon">🔍</text>
+    <input
+      class="search__input"
+      value="{{keyword}}"
+      placeholder="搜菜名，比如「番茄」"
+      placeholder-class="search__ph"
+      confirm-type="search"
+      bindinput="onSearch"
+    />
+    <view wx:if="{{keyword}}" class="search__clear" bindtap="clearSearch">✕</view>
+  </view>
+
+  <scroll-view class="cats" scroll-x show-scrollbar="{{false}}">
+    <view class="cats__inner">
+      <view
+        class="cat {{activeCategory === item.id ? 'cat--on' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onCategory"
+      >
+        <text class="cat__emoji">{{item.emoji}}</text>
+        <text>{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{prefHint}}" class="pref-hint">💡 {{prefHint}}</view>
+
+  <block wx:if="{{refineList.length > 0}}">
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>本店招牌</text>
+    </view>
+    <dish-card
+      wx:for="{{refineList}}"
+      wx:key="id"
+      dish="{{item}}"
+      count="{{item.count}}"
+      bind:add="onAdd"
+      bind:minus="onMinus"
+      bind:tapdish="onOpenDish"
+    />
+  </block>
+
+  <view class="section-title">
+    <view class="section-title__bar"></view>
+    <text>{{listTitle}}</text>
+  </view>
+
+  <dish-card
+    wx:for="{{list}}"
+    wx:key="id"
+    dish="{{item}}"
+    count="{{item.count}}"
+    bind:add="onAdd"
+    bind:minus="onMinus"
+    bind:tapdish="onOpenDish"
+  />
+
+  <empty-state
+    wx:if="{{list.length === 0}}"
+    emoji="🥺"
+    text="没找到这道菜"
+    hint="换个关键词，或者切回「全部」看看"
+  />
+</view>
+
+<view wx:if="{{cartCount > 0}}" class="cartbar" bindtap="openCart">
+  <view class="cartbar__left">
+    <view class="cartbar__bubble">
+      <text class="cartbar__cart">🛒</text>
+      <text class="cartbar__badge">{{cartCount}}</text>
+    </view>
+    <view class="cartbar__text">
+      <view class="cartbar__title">已点 {{cartCount}} 份</view>
+      <view class="cartbar__tip">点一下看看都点了啥</view>
+    </view>
+  </view>
+  <view class="cartbar__btn">去下单</view>
+</view>
+
+<view wx:if="{{showCart}}" class="mask" bindtap="closeCart"></view>
+
+<view class="sheet {{showCart ? 'sheet--on' : ''}}">
+  <view class="sheet__head">
+    <text class="sheet__title">我的菜单</text>
+    <text wx:if="{{cartItems.length > 0}}" class="sheet__clear" bindtap="onClearCart">清空</text>
+  </view>
+
+  <scroll-view class="sheet__list" scroll-y>
+    <view class="sitem" wx:for="{{cartItems}}" wx:key="id">
+      <text class="sitem__emoji">{{item.emoji}}</text>
+      <view class="sitem__body flex-1">
+        <view class="sitem__name ellipsis">{{item.name}}</view>
+        <view class="sitem__desc ellipsis">{{item.desc}}</view>
+      </view>
+      <view class="sitem__ops">
+        <view class="op op--minus" data-id="{{item.id}}" bindtap="onMinusTap">−</view>
+        <text class="op-num">{{item.count}}</text>
+        <view class="op op--add" data-id="{{item.id}}" bindtap="onAddTap">＋</view>
+      </view>
+    </view>
+    <empty-state wx:if="{{cartItems.length === 0}}" emoji="🛒" text="菜单空啦" hint="回去挑几道菜吧" />
+  </scroll-view>
+
+  <view class="sheet__form">
+    <view class="field">
+      <text class="field__label">什么时候想吃</text>
+      <picker mode="selector" range="{{timeOptions}}" value="{{timeIndex}}" bindchange="onTimeChange">
+        <view class="field__value">{{expectTime}} ›</view>
+      </picker>
+    </view>
+    <textarea
+      class="field__textarea"
+      value="{{remark}}"
+      placeholder="有什么想跟大厨说的？比如「少放辣」「多留点汤」"
+      placeholder-class="field__ph"
+      maxlength="60"
+      bindinput="onRemark"
+    />
+  </view>
+
+  <view class="sheet__foot">
+    <view class="sheet__total">共 {{cartItems.length}} 道菜 · {{cartCount}} 份</view>
+    <view class="btn btn--primary sheet__submit" bindtap="submitOrder">告诉大厨 🍳</view>
+  </view>
+</view>

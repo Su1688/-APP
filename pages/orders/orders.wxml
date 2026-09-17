@@ -1,0 +1,68 @@
+<view class="page page--tabbar">
+  <view class="summary">
+    <view class="summary__item">
+      <text class="summary__num">{{counts.pending}}</text>
+      <text class="summary__label">待接单</text>
+    </view>
+    <view class="summary__line"></view>
+    <view class="summary__item">
+      <text class="summary__num">{{counts.cooking}}</text>
+      <text class="summary__label">制作中</text>
+    </view>
+    <view class="summary__line"></view>
+    <view class="summary__item">
+      <text class="summary__num">{{counts.done}}</text>
+      <text class="summary__label">已完成</text>
+    </view>
+  </view>
+
+  <view class="tabs">
+    <view
+      class="tabs__item {{active === item.id ? 'tabs__item--on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onTab"
+    >
+      {{item.name}}
+    </view>
+  </view>
+
+  <view
+    class="order"
+    wx:for="{{orders}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    bindtap="openDetail"
+  >
+    <view class="order__head">
+      <text class="order__no">No.{{item.no}}</text>
+      <text
+        class="badge"
+        style="background:{{item.statusMeta.soft}};color:{{item.statusMeta.color}}"
+      >{{item.statusMeta.text}}</text>
+    </view>
+
+    <view class="order__summary ellipsis-2">{{item.summary}}</view>
+
+    <view class="order__foot">
+      <text class="order__time">{{item.timeText}} · 共 {{item.count}} 份</text>
+      <text wx:if="{{item.urgeCount > 0}}" class="order__urge">已催 {{item.urgeCount}} 次</text>
+    </view>
+
+    <view wx:if="{{item.remark}}" class="order__remark">备注：{{item.remark}}</view>
+
+    <view wx:if="{{isChef && item.actionText}}" class="order__ops">
+      <view class="btn btn--primary order__btn" data-id="{{item.id}}" catchtap="onAdvance">
+        {{item.actionText}}
+      </view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:if="{{orders.length === 0}}"
+    emoji="{{emptyEmoji}}"
+    text="{{emptyText}}"
+    hint="{{emptyHint}}"
+  />
+</view>

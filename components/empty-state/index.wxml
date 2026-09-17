@@ -1,0 +1,5 @@
+<view class="empty">
+  <view class="empty__emoji">{{emoji}}</view>
+  <view class="empty__text">{{text}}</view>
+  <view wx:if="{{hint}}" class="empty__hint">{{hint}}</view>
+</view>

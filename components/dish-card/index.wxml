@@ -1,0 +1,27 @@
+<view class="dish {{dish.soldOut ? 'dish--soldout' : ''}}" wx:if="{{dish}}" bindtap="onTap">
+  <view class="dish__thumb">
+    <image wx:if="{{dish.image}}" class="dish__thumb-img" src="{{dish.image}}" mode="aspectFill" lazy-load />
+    <block wx:else>{{dish.emoji}}</block>
+  </view>
+
+  <view class="dish__body">
+    <view class="dish__title">
+      <text class="dish__name">{{dish.name}}</text>
+      <text wx:if="{{spicyText}}" class="dish__spicy">{{spicyText}}</text>
+    </view>
+    <view class="dish__desc ellipsis">{{dish.desc}}</view>
+    <view class="dish__meta">
+      <text class="chip" wx:for="{{dish.tags}}" wx:key="*this">{{item}}</text>
+      <text class="dish__min">⏱ {{dish.minutes}} 分钟</text>
+    </view>
+  </view>
+
+  <view class="dish__ops" catchtap="noop">
+    <view wx:if="{{dish.soldOut}}" class="dish__soldout">售罄</view>
+    <block wx:else>
+      <view wx:if="{{count > 0}}" class="op op--minus" catchtap="onMinus">−</view>
+      <text wx:if="{{count > 0}}" class="op-num">{{count}}</text>
+      <view class="op op--add" catchtap="onAdd">＋</view>
+    </block>
+  </view>
+</view>

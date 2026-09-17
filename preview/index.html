@@ -1,0 +1,2243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>今天想吃什么 · 点菜</title>
+<style>
+
+  :root {
+    --bg: #fff8f3;
+    --card: #ffffff;
+    --primary: #ff6b4a;
+    --primary-soft: #ffe9e2;
+    --accent: #ffb03a;
+    --mint: #12a594;
+    --text: #2f2a28;
+    --text-sub: #9a8f8a;
+    --text-weak: #bcb2ad;
+    --line: #f3e9e3;
+    --shadow: 0 5px 15px rgba(226, 160, 130, 0.16);
+    --tabbar-h: 54px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #efe6df;
+    color: var(--text);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .phone {
+    position: relative;
+    width: 375px;
+    height: 812px;
+    border-radius: 38px;
+    background: var(--bg);
+    box-shadow: 0 30px 70px rgba(90, 51, 36, 0.28), 0 0 0 10px #1c1614;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .statusbar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 34px;
+    padding: 0 22px 0 28px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .sicons {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text);
+  }
+
+  .sbar {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 11px;
+  }
+
+  .sbar i {
+    width: 3px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+
+  .sbar i:nth-child(1) { height: 4px; }
+  .sbar i:nth-child(2) { height: 6px; }
+  .sbar i:nth-child(3) { height: 8px; }
+  .sbar i:nth-child(4) { height: 11px; }
+
+  .sbatt {
+    position: relative;
+    width: 22px;
+    height: 11px;
+    border: 1.3px solid currentColor;
+    border-radius: 3px;
+    opacity: 0.85;
+  }
+
+  .sbatt::after {
+    content: "";
+    position: absolute;
+    right: -3px;
+    top: 3px;
+    width: 2px;
+    height: 5px;
+    border-radius: 0 1px 1px 0;
+    background: currentColor;
+  }
+
+  .sbatt i {
+    position: absolute;
+    left: 1.5px;
+    top: 1.5px;
+    bottom: 1.5px;
+    width: 13px;
+    border-radius: 1.5px;
+    background: currentColor;
+  }
+
+  .navbar {
+    flex: none;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 14px 180px;
+  }
+
+  .screen::-webkit-scrollbar { width: 0; }
+
+  .hero {
+    position: relative;
+    padding: 18px 18px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffe7d9 0%, #ffd9c4 60%, #ffeacf 100%);
+    overflow: hidden;
+  }
+
+  .hero__greet { font-size: 12px; color: #b07a5e; }
+
+  .hero__title {
+    margin-top: 4px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #5a3324;
+    letter-spacing: 0.5px;
+  }
+
+  .hero__sub { margin-top: 5px; font-size: 11px; color: #a87a63; }
+
+  .hero__emoji {
+    position: absolute;
+    right: 10px;
+    bottom: -5px;
+    font-size: 65px;
+    opacity: 0.85;
+  }
+
+  .search {
+    display: flex;
+    align-items: center;
+    height: 43px;
+    margin-top: 12px;
+    padding: 0 13px;
+    border-radius: 999px;
+    background: var(--card);
+    box-shadow: 0 5px 15px rgba(226, 160, 130, 0.14);
+  }
+
+  .search__icon { font-size: 14px; opacity: 0.7; }
+
+  .search input {
+    flex: 1;
+    min-width: 0;
+    margin-left: 7px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+  }
+
+  .search input::placeholder { color: var(--text-weak); }
+
+  .search__clear {
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 999px;
+    background: #f3ece8;
+    color: var(--text-sub);
+    font-size: 11px;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .cats {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-bottom: 3px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .cats::-webkit-scrollbar { height: 0; }
+
+  .cat {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--text-sub);
+    font-size: 13px;
+    font-family: inherit;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .cat:active { transform: scale(0.96); }
+
+  .cat--on {
+    color: #fff;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    box-shadow: 0 4px 10px rgba(255, 107, 74, 0.28);
+  }
+
+  .pref-hint {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    background: #fff6e5;
+    color: #b3812f;
+    font-size: 11px;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 17px 2px 9px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .section-title::before {
+    content: "";
+    width: 4px;
+    height: 15px;
+    border-radius: 999px;
+    background: var(--primary);
+  }
+
+  .dish {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .dish__thumb {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    margin-right: 11px;
+    border-radius: 10px;
+    background: linear-gradient(160deg, #fff2e8 0%, #ffe4d6 100%);
+    font-size: 26px;
+    line-height: 52px;
+    text-align: center;
+  }
+
+  .dish__body { flex: 1; min-width: 0; }
+  .dish__title { display: flex; align-items: center; gap: 6px; }
+
+  .dish__name {
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dish__spicy {
+    flex: none;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 9px;
+  }
+
+  .dish__desc {
+    margin-top: 3px;
+    color: var(--text-sub);
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dish__meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .chip {
+    flex: none;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #f7f1ed;
+    color: var(--text-sub);
+    font-size: 10px;
+  }
+
+  .dish__min { flex: none; color: var(--text-weak); font-size: 10px; }
+  .dish__ops { flex: none; display: flex; align-items: center; margin-left: 8px; }
+
+  .op {
+    width: 26px;
+    height: 26px;
+    border: 0;
+    border-radius: 999px;
+    font-size: 16px;
+    line-height: 1;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s;
+  }
+
+  .op:active { transform: scale(0.88); }
+
+  .op--add {
+    color: #fff;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    box-shadow: 0 3px 8px rgba(255, 107, 74, 0.3);
+  }
+
+  .op--minus {
+    color: var(--primary);
+    background: #fff;
+    border: 1px solid #ffd9cd;
+  }
+
+  .op-num {
+    min-width: 22px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dish--soldout .dish__thumb { filter: grayscale(1); opacity: 0.6; }
+  .dish--soldout .dish__name { color: var(--text-sub); }
+  .dish--soldout .dish__desc { color: var(--text-weak); }
+
+  .dish__soldout {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: #f2edeb;
+    color: var(--text-sub);
+    font-size: 11px;
+  }
+
+  .empty { padding: 60px 20px; text-align: center; }
+  .empty__emoji { font-size: 48px; }
+  .empty__text { margin-top: 10px; color: var(--text-sub); font-size: 14px; }
+  .empty__hint { margin-top: 5px; color: var(--text-weak); font-size: 12px; }
+
+  .cartbar {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 68px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+    padding: 0 9px 0 13px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3d322d 0%, #2b2320 100%);
+    box-shadow: 0 8px 18px rgba(58, 47, 43, 0.34);
+    transform: translateY(90px);
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.2s;
+    cursor: pointer;
+  }
+
+  .cartbar--on { transform: translateY(0); opacity: 1; }
+  .cartbar__left { display: flex; align-items: center; min-width: 0; }
+
+  .cartbar__bubble {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    text-align: center;
+    font-size: 18px;
+    line-height: 38px;
+  }
+
+  .cartbar__badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 17px;
+  }
+
+  .cartbar__text { margin-left: 10px; min-width: 0; }
+  .cartbar__title { color: #fff; font-size: 14px; font-weight: 600; }
+  .cartbar__tip { margin-top: 1px; color: rgba(255, 255, 255, 0.55); font-size: 10px; }
+
+  .cartbar__btn {
+    flex: none;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 40px;
+  }
+
+  .tabbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 25;
+    display: flex;
+    height: var(--tabbar-h);
+    background: rgba(255, 255, 255, 0.98);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -3px 12px rgba(226, 160, 130, 0.1);
+  }
+
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    border: 0;
+    background: transparent;
+    color: var(--text-sub);
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
+  }
+
+  .tab__icon { position: relative; font-size: 18px; line-height: 1; opacity: 0.55; }
+  .tab--on { color: var(--primary); font-weight: 600; }
+  .tab--on .tab__icon { opacity: 1; }
+
+  .tab__badge {
+    position: absolute;
+    top: -4px;
+    right: -11px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    line-height: 15px;
+    text-align: center;
+  }
+
+  .mask {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 40;
+    background: rgba(47, 42, 40, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s;
+  }
+
+  .mask--on { opacity: 1; pointer-events: auto; }
+
+  .sheet {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    max-height: 78%;
+    padding: 0 16px 14px;
+    border-radius: 18px 18px 0 0;
+    background: #fff;
+    transform: translateY(112%);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .sheet--on { transform: translateY(0); }
+
+  .sheet__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 17px 0 9px;
+  }
+
+  .sheet__title { font-size: 16px; font-weight: 700; }
+
+  .sheet__clear {
+    padding: 4px 11px;
+    border: 0;
+    border-radius: 999px;
+    background: #f7f1ed;
+    color: var(--text-sub);
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .sheet__list { flex: 1; overflow-y: auto; max-height: 40vh; }
+  .sheet__list::-webkit-scrollbar { width: 0; }
+
+  .sitem {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f6efeb;
+  }
+
+  .sitem__emoji { width: 36px; flex: none; font-size: 20px; }
+  .sitem__body { flex: 1; min-width: 0; padding-right: 8px; }
+  .sitem__name { font-size: 14px; font-weight: 600; }
+
+  .sitem__desc {
+    margin-top: 2px;
+    color: var(--text-weak);
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sitem__ops { flex: none; display: flex; align-items: center; }
+
+  .sheet__form {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 11px;
+    background: #fdf8f5;
+  }
+
+  .field { display: flex; align-items: center; justify-content: space-between; }
+  .field__label { font-size: 13px; color: #6b5f59; }
+
+  .field__value {
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .field__textarea {
+    width: 100%;
+    height: 54px;
+    margin-top: 8px;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    resize: none;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+  }
+
+  .field__textarea::placeholder { color: var(--text-weak); font-size: 12px; }
+
+  .sheet__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  .sheet__total { color: var(--text-sub); font-size: 12px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.12s;
+  }
+
+  .btn:active { opacity: 0.86; transform: scale(0.98); }
+
+  .btn--primary {
+    color: #fff;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    box-shadow: 0 5px 12px rgba(255, 107, 74, 0.32);
+  }
+
+  .btn--ghost { color: var(--primary); background: var(--primary-soft); }
+  .btn--plain { color: var(--text-sub); background: #f7f1ed; }
+  .btn--block { width: 100%; }
+
+  .summary {
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ffe7d9 0%, #ffdcc9 100%);
+  }
+
+  .summary__item { flex: 1; text-align: center; }
+  .summary__num { display: block; font-size: 22px; font-weight: 700; color: #5a3324; }
+  .summary__label { font-size: 11px; color: #a87a63; }
+  .summary__line { width: 1px; height: 24px; background: rgba(168, 122, 99, 0.22); }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-top: 14px;
+    padding: 4px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(226, 160, 130, 0.12);
+  }
+
+  .tabs__item {
+    flex: 1;
+    height: 34px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .tabs__item--on {
+    color: #fff;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    box-shadow: 0 4px 10px rgba(255, 107, 74, 0.28);
+  }
+
+  .order {
+    margin-top: 11px;
+    padding: 13px;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(226, 160, 130, 0.14);
+    cursor: pointer;
+  }
+
+  .order__head { display: flex; align-items: center; justify-content: space-between; }
+  .order__no { color: var(--text-weak); font-size: 11px; }
+
+  .badge {
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .order__summary { margin-top: 8px; font-size: 15px; font-weight: 600; line-height: 1.45; }
+
+  .order__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: var(--text-sub);
+    font-size: 11px;
+  }
+
+  .order__urge { color: var(--primary); }
+
+  .order__remark {
+    margin-top: 7px;
+    padding: 7px 10px;
+    border-radius: 7px;
+    background: #fdf8f5;
+    color: var(--text-sub);
+    font-size: 11px;
+  }
+
+  .order__ops { display: flex; justify-content: flex-end; margin-top: 11px; }
+  .order__btn { height: 34px; font-size: 13px; }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    padding: 18px 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffe7d9 0%, #ffdcc9 100%);
+  }
+
+  .profile__avatar {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    margin-right: 13px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 30px;
+    line-height: 64px;
+    text-align: center;
+  }
+
+  .profile__nick { font-size: 18px; font-weight: 700; color: #5a3324; }
+  .profile__tag { margin-top: 5px; font-size: 11px; color: #a87a63; }
+
+  .stats {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+    padding: 15px 0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(226, 160, 130, 0.14);
+  }
+
+  .stats__item { flex: 1; text-align: center; }
+  .stats__num { display: block; font-size: 20px; font-weight: 700; color: var(--primary); }
+  .stats__label { font-size: 10px; color: var(--text-sub); }
+  .stats__line { width: 1px; height: 22px; background: var(--line); }
+
+  .card {
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 5px 15px rgba(226, 160, 130, 0.14);
+  }
+
+  .row-between { display: flex; align-items: center; justify-content: space-between; }
+  .row-title { font-size: 14px; font-weight: 600; }
+  .row-sub { margin-top: 3px; color: var(--text-sub); font-size: 11px; }
+
+  .switch {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    flex: none;
+    border: 0;
+    border-radius: 999px;
+    background: #e6ddd7;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s;
+  }
+
+  .switch--on { background: var(--primary); }
+  .switch--on::after { transform: translateX(20px); }
+
+  .pchips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  .pchip {
+    padding: 6px 15px;
+    border: 0;
+    border-radius: 999px;
+    background: #f7f1ed;
+    color: var(--text-sub);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .pchip--on {
+    color: #fff;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+    box-shadow: 0 4px 9px rgba(255, 107, 74, 0.26);
+  }
+
+  .detail-hero {
+    padding: 22px 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ffe7d9 0%, #ffdcc9 100%);
+    text-align: center;
+  }
+
+  .detail-hero__emoji { font-size: 44px; line-height: 1.1; }
+  .detail-hero__status { margin-top: 6px; font-size: 20px; font-weight: 700; }
+  .detail-hero__desc { margin-top: 4px; color: #a87a63; font-size: 12px; }
+  .detail-hero__no { margin-top: 9px; color: rgba(168, 122, 99, 0.7); font-size: 11px; }
+
+  .item {
+    display: flex;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 1px solid #f6efeb;
+  }
+
+  .item:last-child { border-bottom: 0; }
+  .item__emoji { width: 32px; flex: none; font-size: 18px; }
+  .item__name { flex: 1; font-size: 14px; }
+  .item__count { color: var(--text-sub); font-size: 13px; }
+  .item--total { color: #6b5f59; font-size: 12px; }
+  .item__total { color: var(--primary); font-weight: 600; font-size: 13px; }
+
+  .info-row { display: flex; align-items: flex-start; padding: 5px 0; }
+  .info-label { width: 70px; flex: none; color: var(--text-sub); font-size: 12px; }
+  .info-value { flex: 1; font-size: 13px; }
+
+  .tl { display: flex; padding-bottom: 13px; }
+  .tl:last-child { padding-bottom: 0; }
+  .tl__dot { flex: none; width: 8px; height: 8px; margin: 5px 10px 0 0; border-radius: 999px; }
+  .tl__text { font-size: 13px; }
+  .tl__time { margin-top: 2px; color: var(--text-weak); font-size: 10px; }
+
+  .actions { display: flex; gap: 9px; margin-top: 18px; }
+  .actions .btn { flex: 1; }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .toast {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 90;
+    max-width: 250px;
+    padding: 13px 20px;
+    border-radius: 11px;
+    background: rgba(30, 25, 22, 0.86);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+    transform: translate(-50%, -50%) scale(0.94);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .toast--on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+  .hint-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(28, 22, 20, 0.8);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 460px), (max-height: 860px) {
+    body { padding: 0; display: block; }
+    .phone { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+    .hint-bar { display: none; }
+  }
+
+  /* 真机上就是全屏页面：去掉手机外壳和假状态栏，交给系统状态栏 */
+  @media (max-width: 560px) {
+    html, body { background: var(--bg); }
+    body { padding: 0; display: block; overflow: hidden; }
+    .phone {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+      box-shadow: none;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .statusbar { display: none; }
+    .hint-bar { display: none; }
+    .navbar { padding-top: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+  <div class="statusbar">
+    <span id="clock">9:41</span>
+    <span class="sicons">
+      <span class="sbar"><i></i><i></i><i></i><i></i></span>
+      <span class="sbatt"><i></i></span>
+    </span>
+  </div>
+
+  <div class="navbar" id="navbar">今天想吃什么</div>
+
+  <div class="screen" id="screen"></div>
+
+  <div class="cartbar" id="cartbar">
+    <div class="cartbar__left">
+      <div class="cartbar__bubble">
+        🛒<span class="cartbar__badge" id="cartBadge">0</span>
+      </div>
+      <div class="cartbar__text">
+        <div class="cartbar__title" id="cartTitle">已点 0 份</div>
+        <div class="cartbar__tip">点一下看看都点了啥</div>
+      </div>
+    </div>
+    <div class="cartbar__btn">去下单</div>
+  </div>
+
+  <div class="tabbar" id="tabbar"></div>
+
+  <div class="mask" id="mask"></div>
+  <div class="sheet" id="sheet"></div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<div class="hint-bar">可以直接点：切分类、搜索、加减菜、下单看订单</div>
+
+<script>
+
+const DISHES = [
+  {
+    "id": "fanqie-chaodan",
+    "name": "番茄炒蛋",
+    "emoji": "🍅",
+    "category": "hot",
+    "desc": "酸甜多汁，汤汁拌米饭能吃两碗",
+    "tags": [
+      "招牌",
+      "下饭",
+      "零失败"
+    ],
+    "spicy": 0,
+    "minutes": 10,
+    "level": 1,
+    "ingredients": [
+      "番茄 2 个",
+      "鸡蛋 3 个",
+      "白糖 1 小勺",
+      "盐 适量",
+      "葱花 少许"
+    ],
+    "steps": [
+      "番茄顶部划十字，开水烫 30 秒后去皮切块；鸡蛋加少许盐打散。",
+      "热锅多油，倒入蛋液，边缘凝固后炒成大块盛出。",
+      "用底油下番茄块，加糖和盐中火炒到出沙、汤汁变浓。",
+      "倒回鸡蛋翻匀，撒葱花出锅。"
+    ]
+  },
+  {
+    "id": "kele-jichi",
+    "name": "可乐鸡翅",
+    "emoji": "🍗",
+    "category": "hot",
+    "desc": "甜咸挂汁，翅面亮晶晶，新手也翻不了车",
+    "tags": [
+      "招牌",
+      "甜口",
+      "零失败"
+    ],
+    "spicy": 0,
+    "minutes": 25,
+    "level": 1,
+    "ingredients": [
+      "鸡中翅 10 个",
+      "可乐 1 罐",
+      "生抽 2 勺",
+      "姜片 3 片",
+      "料酒 1 勺"
+    ],
+    "steps": [
+      "鸡翅两面各划两刀，冷水下锅加料酒焯 3 分钟，捞出擦干。",
+      "锅内少油，鸡翅中小火煎到两面金黄。",
+      "倒入可乐没过鸡翅，加生抽和姜片，大火烧开转中小火煮 12 分钟。",
+      "开大火收汁到酱汁浓稠裹住鸡翅即可。"
+    ]
+  },
+  {
+    "id": "hongshaorou",
+    "name": "红烧肉",
+    "emoji": "🥩",
+    "category": "hot",
+    "desc": "肥而不腻、入口即化，硬菜担当",
+    "tags": [
+      "硬菜",
+      "下饭"
+    ],
+    "spicy": 0,
+    "minutes": 60,
+    "level": 3,
+    "ingredients": [
+      "五花肉 500g",
+      "冰糖 20g",
+      "生抽 2 勺",
+      "老抽 1 勺",
+      "姜片 3 片",
+      "八角 2 颗"
+    ],
+    "steps": [
+      "五花肉切 3cm 见方的块，冷水下锅焯 3 分钟，捞出冲净浮沫。",
+      "锅内少油下冰糖，小火炒到琥珀色，倒入肉块翻炒上色。",
+      "加姜片、八角、生抽、老抽，倒入没过肉的热水，烧开转小火炖 40 分钟。",
+      "大火收汁到浓稠挂勺，撒葱花出锅。"
+    ]
+  },
+  {
+    "id": "qingjiao-rousi",
+    "name": "青椒肉丝",
+    "emoji": "🫑",
+    "category": "hot",
+    "desc": "肉丝滑嫩，青椒脆爽，米饭杀手",
+    "tags": [
+      "家常",
+      "快炒"
+    ],
+    "spicy": 1,
+    "minutes": 15,
+    "level": 2,
+    "ingredients": [
+      "猪里脊 200g",
+      "青椒 3 个",
+      "蒜末 2 瓣",
+      "生抽 1 勺",
+      "淀粉 1 勺"
+    ],
+    "steps": [
+      "里脊顺纹切丝，加生抽、淀粉和一点油抓匀腌 10 分钟。",
+      "青椒去籽切丝，热锅冷油下肉丝快速滑散至变色盛出。",
+      "底油爆香蒜末，下青椒丝大火炒 1 分钟。",
+      "倒回肉丝，加盐翻匀出锅。"
+    ]
+  },
+  {
+    "id": "mapo-doufu",
+    "name": "麻婆豆腐",
+    "emoji": "🌶️",
+    "category": "hot",
+    "desc": "麻辣鲜香，一勺豆腐一勺饭",
+    "tags": [
+      "麻辣",
+      "下饭"
+    ],
+    "spicy": 3,
+    "minutes": 20,
+    "level": 2,
+    "ingredients": [
+      "嫩豆腐 1 盒",
+      "牛肉末 80g",
+      "豆瓣酱 1 勺",
+      "花椒粉 少许",
+      "蒜末 2 瓣",
+      "水淀粉 适量"
+    ],
+    "steps": [
+      "豆腐切小块，放淡盐水里泡 5 分钟去豆腥。",
+      "热油下牛肉末炒散，加豆瓣酱和蒜末炒出红油。",
+      "加一碗热水烧开，轻轻推入豆腐块，中小火煮 5 分钟。",
+      "分两次淋入水淀粉勾芡，出锅撒花椒粉和葱花。"
+    ]
+  },
+  {
+    "id": "suanrong-xilanhua",
+    "name": "蒜蓉西兰花",
+    "emoji": "🥦",
+    "category": "hot",
+    "desc": "清爽解腻，颜色翠绿好看",
+    "tags": [
+      "清淡",
+      "低卡"
+    ],
+    "spicy": 0,
+    "minutes": 10,
+    "level": 1,
+    "ingredients": [
+      "西兰花 1 颗",
+      "大蒜 4 瓣",
+      "蚝油 1 勺",
+      "盐 适量"
+    ],
+    "steps": [
+      "西兰花掰小朵，淡盐水泡 10 分钟后洗净。",
+      "水烧开加一点盐和油，焯 90 秒后捞出过凉水。",
+      "热锅冷油爆香蒜末，倒入西兰花大火翻炒。",
+      "加蚝油和盐炒匀，出锅。"
+    ]
+  },
+  {
+    "id": "fanqie-danhua-tang",
+    "name": "番茄蛋花汤",
+    "emoji": "🍲",
+    "category": "soup",
+    "desc": "10 分钟出锅，暖胃又开胃",
+    "tags": [
+      "快手",
+      "暖胃"
+    ],
+    "spicy": 0,
+    "minutes": 10,
+    "level": 1,
+    "ingredients": [
+      "番茄 2 个",
+      "鸡蛋 2 个",
+      "香油 几滴",
+      "盐 适量",
+      "葱花 少许"
+    ],
+    "steps": [
+      "番茄切小块，鸡蛋打散备用。",
+      "锅中热油炒番茄到出汁，加两碗水烧开煮 3 分钟。",
+      "转小火，把蛋液沿锅边缓缓淋入，形成蛋花。",
+      "加盐调味，滴香油，撒葱花。"
+    ]
+  },
+  {
+    "id": "yumi-paigu-tang",
+    "name": "玉米排骨汤",
+    "emoji": "🌽",
+    "category": "soup",
+    "desc": "清甜不油，喝完浑身都暖",
+    "tags": [
+      "炖汤",
+      "清甜"
+    ],
+    "spicy": 0,
+    "minutes": 70,
+    "level": 2,
+    "ingredients": [
+      "排骨 400g",
+      "甜玉米 2 根",
+      "胡萝卜 1 根",
+      "姜片 3 片",
+      "盐 适量"
+    ],
+    "steps": [
+      "排骨冷水下锅焯 3 分钟，捞出洗净浮沫。",
+      "玉米切段，胡萝卜切滚刀块。",
+      "所有食材加姜片和足量清水，大火烧开转小火炖 60 分钟。",
+      "出锅前加盐调味即可。"
+    ]
+  },
+  {
+    "id": "zicai-danhua-tang",
+    "name": "紫菜蛋花汤",
+    "emoji": "🥣",
+    "category": "soup",
+    "desc": "8 分钟搞定，低卡又鲜",
+    "tags": [
+      "快手",
+      "低卡"
+    ],
+    "spicy": 0,
+    "minutes": 8,
+    "level": 1,
+    "ingredients": [
+      "紫菜 1 小把",
+      "鸡蛋 2 个",
+      "虾皮 1 勺",
+      "香油 几滴",
+      "盐 适量"
+    ],
+    "steps": [
+      "紫菜撕小块，鸡蛋打散。",
+      "水烧开后放入紫菜和虾皮煮 2 分钟。",
+      "转小火淋入蛋液，蛋花成型后关火。",
+      "加盐、滴香油，撒葱花。"
+    ]
+  },
+  {
+    "id": "dan-chaofan",
+    "name": "黄金蛋炒饭",
+    "emoji": "🍚",
+    "category": "staple",
+    "desc": "粒粒分明，每颗饭都裹上蛋液",
+    "tags": [
+      "快手",
+      "管饱"
+    ],
+    "spicy": 0,
+    "minutes": 12,
+    "level": 1,
+    "ingredients": [
+      "隔夜米饭 2 碗",
+      "鸡蛋 2 个",
+      "胡萝卜丁 半根",
+      "火腿丁 适量",
+      "葱花 少许"
+    ],
+    "steps": [
+      "鸡蛋打散倒入冷米饭中拌匀，让米粒都裹上蛋液。",
+      "热锅多油，下米饭中大火翻炒到粒粒松散。",
+      "加胡萝卜丁和火腿丁炒 2 分钟。",
+      "加盐调味，撒葱花翻匀出锅。"
+    ]
+  },
+  {
+    "id": "fanqie-jidan-mian",
+    "name": "番茄鸡蛋面",
+    "emoji": "🍜",
+    "category": "staple",
+    "desc": "一锅出，汤浓面滑，宵夜首选",
+    "tags": [
+      "一锅出",
+      "暖胃"
+    ],
+    "spicy": 0,
+    "minutes": 15,
+    "level": 1,
+    "ingredients": [
+      "挂面 1 把",
+      "番茄 2 个",
+      "鸡蛋 2 个",
+      "生抽 1 勺",
+      "葱花 少许"
+    ],
+    "steps": [
+      "番茄切块，鸡蛋打散后炒成蛋块盛出。",
+      "底油炒番茄出沙，加生抽和两碗水烧开。",
+      "下挂面煮到喜欢的软硬。",
+      "倒回鸡蛋，加盐调味，撒葱花。"
+    ]
+  },
+  {
+    "id": "zhurou-baicai-jiaozi",
+    "name": "猪肉白菜水饺",
+    "emoji": "🥟",
+    "category": "staple",
+    "desc": "现包现煮，配醋和蒜超满足",
+    "tags": [
+      "手作",
+      "管饱"
+    ],
+    "spicy": 0,
+    "minutes": 50,
+    "level": 3,
+    "ingredients": [
+      "饺子皮 1 斤",
+      "猪肉末 300g",
+      "白菜 半颗",
+      "姜末 1 勺",
+      "生抽 2 勺",
+      "香油 1 勺"
+    ],
+    "steps": [
+      "白菜剁碎加盐杀水 10 分钟，挤干水分。",
+      "肉末加姜末、生抽、香油和 3 勺清水，顺一个方向搅上劲。",
+      "拌入白菜碎成馅，包成饺子。",
+      "水开下锅，三次点水煮到饺子浮起即可。"
+    ]
+  },
+  {
+    "id": "congyou-banmian",
+    "name": "葱油拌面",
+    "emoji": "🍝",
+    "category": "staple",
+    "desc": "葱香浓到上头，拌开就是香",
+    "tags": [
+      "香",
+      "快手"
+    ],
+    "spicy": 0,
+    "minutes": 15,
+    "level": 1,
+    "ingredients": [
+      "细面条 1 把",
+      "小葱 1 大把",
+      "生抽 2 勺",
+      "老抽 半勺",
+      "白糖 1 小勺"
+    ],
+    "steps": [
+      "小葱切段，冷油下锅小火慢炸到葱段焦黄。",
+      "关火后加生抽、老抽和白糖，利用余温拌匀成葱油汁。",
+      "面条煮熟捞出过一下凉水，沥干。",
+      "淋上葱油汁充分拌匀即可。"
+    ]
+  },
+  {
+    "id": "jimi-hua",
+    "name": "香酥鸡米花",
+    "emoji": "🍗",
+    "category": "snack",
+    "desc": "外脆里嫩，配番茄酱追剧神器",
+    "tags": [
+      "追剧",
+      "酥脆"
+    ],
+    "spicy": 1,
+    "minutes": 25,
+    "level": 2,
+    "ingredients": [
+      "鸡胸肉 300g",
+      "鸡蛋 1 个",
+      "淀粉 3 勺",
+      "面包糠 适量",
+      "黑胡椒 少许"
+    ],
+    "steps": [
+      "鸡胸肉切小块，加盐、黑胡椒和鸡蛋抓匀腌 15 分钟。",
+      "依次裹淀粉、蛋液、面包糠。",
+      "油温六成热下锅，中小火炸 3 分钟到金黄。",
+      "捞出沥油，复炸 30 秒更酥。"
+    ]
+  },
+  {
+    "id": "zhishi-hongshu",
+    "name": "芝士焗红薯",
+    "emoji": "🍠",
+    "category": "snack",
+    "desc": "拉丝芝士配绵密红薯，甜到心里",
+    "tags": [
+      "拉丝",
+      "甜口"
+    ],
+    "spicy": 0,
+    "minutes": 35,
+    "level": 1,
+    "ingredients": [
+      "红薯 2 个",
+      "马苏里拉芝士 100g",
+      "黄油 15g",
+      "牛奶 2 勺",
+      "白糖 1 小勺"
+    ],
+    "steps": [
+      "红薯洗净对半切开，上锅蒸 20 分钟至软。",
+      "挖出红薯肉，与黄油、牛奶、白糖拌成泥。",
+      "把薯泥填回红薯壳，铺满芝士碎。",
+      "烤箱 200 度烤 10 分钟到芝士融化上色。"
+    ]
+  },
+  {
+    "id": "zhangyu-xiaowanzi",
+    "name": "章鱼小丸子",
+    "emoji": "🐙",
+    "category": "snack",
+    "desc": "外酥里嫩，撒满木鱼花会跳舞",
+    "tags": [
+      "夜市",
+      "有趣"
+    ],
+    "spicy": 0,
+    "minutes": 30,
+    "level": 3,
+    "ingredients": [
+      "低筋面粉 100g",
+      "鸡蛋 1 个",
+      "熟章鱼丁 80g",
+      "木鱼花 适量",
+      "沙拉酱 适量",
+      "照烧汁 适量"
+    ],
+    "steps": [
+      "面粉、鸡蛋加 180ml 高汤调成稀糊，静置 15 分钟。",
+      "丸子锅刷油烧热，倒入粉糊至八分满，撒章鱼丁和葱花。",
+      "边缘凝固后用签子转 90 度，补一点粉糊再翻转成球。",
+      "煎到表面金黄，挤照烧汁和沙拉酱，撒木鱼花。"
+    ]
+  },
+  {
+    "id": "mangguo-banji",
+    "name": "芒果班戟",
+    "emoji": "🥭",
+    "category": "dessert",
+    "desc": "软皮裹着奶油和芒果，一口爆汁",
+    "tags": [
+      "港式",
+      "奶油"
+    ],
+    "spicy": 0,
+    "minutes": 40,
+    "level": 3,
+    "ingredients": [
+      "低筋面粉 60g",
+      "鸡蛋 1 个",
+      "牛奶 180ml",
+      "淡奶油 200ml",
+      "芒果 2 个",
+      "白糖 25g"
+    ],
+    "steps": [
+      "面粉、鸡蛋、牛奶和 10g 糖拌成面糊，过筛后静置 20 分钟。",
+      "平底锅小火摊成薄饼皮，单面凝固即可取出晾凉。",
+      "淡奶油加 15g 糖打发到硬挺，芒果切条。",
+      "饼皮上放奶油和芒果，四边折起包成方块，冷藏 30 分钟。"
+    ]
+  },
+  {
+    "id": "yangzhi-ganlu",
+    "name": "杨枝甘露",
+    "emoji": "🍧",
+    "category": "dessert",
+    "desc": "芒果西柚椰奶，夏天一口入魂",
+    "tags": [
+      "清爽",
+      "夏日"
+    ],
+    "spicy": 0,
+    "minutes": 20,
+    "level": 2,
+    "ingredients": [
+      "芒果 3 个",
+      "西柚 半个",
+      "西米 50g",
+      "椰浆 150ml",
+      "牛奶 100ml",
+      "炼乳 1 勺"
+    ],
+    "steps": [
+      "水开下西米煮 12 分钟，关火焖到中间无白点，过凉水。",
+      "芒果一半打成果泥，一半切丁；西柚剥出果粒。",
+      "椰浆、牛奶、炼乳和芒果泥拌匀成底。",
+      "加入西米、芒果丁和西柚粒，冷藏后更好喝。"
+    ]
+  },
+  {
+    "id": "tilamisu",
+    "name": "提拉米苏",
+    "emoji": "🍰",
+    "category": "dessert",
+    "desc": "咖啡微苦配奶香，浪漫值拉满",
+    "tags": [
+      "咖啡",
+      "浪漫"
+    ],
+    "spicy": 0,
+    "minutes": 240,
+    "level": 3,
+    "ingredients": [
+      "马斯卡彭 250g",
+      "手指饼干 12 根",
+      "蛋黄 2 个",
+      "淡奶油 150ml",
+      "浓缩咖啡 100ml",
+      "可可粉 适量"
+    ],
+    "steps": [
+      "蛋黄加糖隔热水打到浓稠发白，拌入马斯卡彭。",
+      "淡奶油打至七分发，翻拌进芝士糊。",
+      "手指饼干快速蘸咖啡液，铺一层在容器底部。",
+      "一层芝士糊一层饼干交替铺满，冷藏 4 小时，食用前筛可可粉。"
+    ]
+  },
+  {
+    "id": "ningmeng-qipaoshui",
+    "name": "柠檬气泡水",
+    "emoji": "🍋",
+    "category": "drink",
+    "desc": "3 分钟搞定，解腻第一名",
+    "tags": [
+      "零难度",
+      "清爽"
+    ],
+    "spicy": 0,
+    "minutes": 3,
+    "level": 1,
+    "ingredients": [
+      "柠檬 1 个",
+      "苏打水 1 瓶",
+      "蜂蜜 1 勺",
+      "冰块 适量",
+      "薄荷叶 几片"
+    ],
+    "steps": [
+      "柠檬切两片装饰，其余挤汁。",
+      "杯中加柠檬汁、蜂蜜和冰块。",
+      "倒入冰镇苏打水，放柠檬片和薄荷叶。"
+    ]
+  },
+  {
+    "id": "zhenzhu-naicha",
+    "name": "珍珠奶茶",
+    "emoji": "🧋",
+    "category": "drink",
+    "desc": "在家实现奶茶自由，珍珠 QQ 弹",
+    "tags": [
+      "奶茶自由"
+    ],
+    "spicy": 0,
+    "minutes": 30,
+    "level": 2,
+    "ingredients": [
+      "木薯珍珠 80g",
+      "红茶包 2 个",
+      "牛奶 250ml",
+      "红糖 2 勺"
+    ],
+    "steps": [
+      "水开下珍珠煮 20 分钟，关火焖 10 分钟，捞出过凉水。",
+      "红糖加水煮成浓糖浆，拌入珍珠。",
+      "红茶包用 100ml 热水泡 5 分钟，加牛奶和糖调味。",
+      "杯中先放珍珠和糖浆，再倒入奶茶。"
+    ]
+  },
+  {
+    "id": "xianzha-chengzhi",
+    "name": "鲜榨橙汁",
+    "emoji": "🍊",
+    "category": "drink",
+    "desc": "无添加，补充今日份维 C",
+    "tags": [
+      "维C",
+      "早餐"
+    ],
+    "spicy": 0,
+    "minutes": 5,
+    "level": 1,
+    "ingredients": [
+      "橙子 4 个",
+      "蜂蜜 1 小勺",
+      "冰块 适量"
+    ],
+    "steps": [
+      "橙子对半切开，用榨汁器榨出果汁。",
+      "过滤掉粗渣，按口味加蜂蜜。",
+      "加冰块摇匀，立刻喝掉最鲜。"
+    ]
+  }
+];
+const CATEGORIES = [
+  {
+    "id": "all",
+    "name": "全部",
+    "emoji": "🍽"
+  },
+  {
+    "id": "hot",
+    "name": "热菜",
+    "emoji": "🔥"
+  },
+  {
+    "id": "soup",
+    "name": "汤羹",
+    "emoji": "🍲"
+  },
+  {
+    "id": "staple",
+    "name": "主食",
+    "emoji": "🍚"
+  },
+  {
+    "id": "snack",
+    "name": "小吃",
+    "emoji": "🍟"
+  },
+  {
+    "id": "dessert",
+    "name": "甜品",
+    "emoji": "🍰"
+  },
+  {
+    "id": "drink",
+    "name": "饮品",
+    "emoji": "🧋"
+  }
+];
+
+const SPICY_TEXT = { 0: "", 1: "微辣", 2: "中辣", 3: "特辣" };
+const SPICY_LABELS = ["不辣", "微辣", "中辣", "特辣"];
+const DISLIKE_OPTIONS = ["香菜", "葱", "姜", "蒜", "辣椒", "花生", "海鲜", "内脏", "胡萝卜", "菌菇"];
+const TIME_OPTIONS = ["尽快", "30 分钟后", "1 小时后", "晚饭时间"];
+
+const STATUS = {
+  pending: { text: "待接单", color: "#e08a1e", soft: "#fff3e0", desc: "已经把菜单送到大厨手里啦", step: "已提交点菜" },
+  cooking: { text: "制作中", color: "#ff6b4a", soft: "#ffe9e2", desc: "大厨正在灶台前忙活，香味快出来了", step: "大厨接单，正在做" },
+  done: { text: "已完成", color: "#12a594", soft: "#e2f7f4", desc: "开饭啦，趁热吃～", step: "做好啦" },
+  cancel: { text: "已取消", color: "#9a8f8a", soft: "#f2edeb", desc: "这单已经取消啦", step: "已取消" }
+};
+const FLOW = ["pending", "cooking", "done"];
+
+const ORDER_TABS = [
+  { id: "all", name: "全部" },
+  { id: "pending", name: "待接单" },
+  { id: "cooking", name: "制作中" },
+  { id: "done", name: "已完成" }
+];
+
+const TABS = [
+  { id: "menu", text: "点菜", icon: "🍽" },
+  { id: "orders", text: "订单", icon: "🧾" },
+  { id: "favorites", text: "收藏", icon: "💛" },
+  { id: "my", text: "我的", icon: "🙋" }
+];
+
+const NAV_TITLE = { menu: "今天想吃什么", orders: "点菜记录", favorites: "我的收藏", my: "我的" };
+
+const state = {
+  view: "menu",
+  category: "all",
+  keyword: "",
+  cart: [],
+  orders: [],
+  favorites: ["fanqie-chaodan"],
+  isChef: false,
+  showCart: false,
+  orderTab: "all",
+  detailId: null,
+  expectTime: "尽快",
+  remark: "",
+  spicy: 1,
+  dislikes: ["香菜"]
+};
+
+function $(id) { return document.getElementById(id); }
+function dishById(id) { return DISHES.filter(function (d) { return d.id === id; })[0] || null; }
+function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  return pad(d.getMonth() + 1) + "-" + pad(d.getDate()) + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+
+function relativeTime(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return "刚刚";
+  if (diff < 3600000) return Math.floor(diff / 60000) + " 分钟前";
+  if (diff < 86400000) return Math.floor(diff / 3600000) + " 小时前";
+  return formatTime(ts);
+}
+
+function cartCount() {
+  return state.cart.reduce(function (s, i) { return s + i.count; }, 0);
+}
+
+function cartCountOf(id) {
+  const item = state.cart.filter(function (i) { return i.id === id; })[0];
+  return item ? item.count : 0;
+}
+
+function addToCart(id) {
+  const item = state.cart.filter(function (i) { return i.id === id; })[0];
+  if (item) {
+    if (item.count >= 9) { toast("一道菜最多点 9 份哦"); return; }
+    item.count += 1;
+  } else {
+    state.cart.push({ id: id, count: 1 });
+  }
+  render();
+}
+
+function removeFromCart(id) {
+  let index = -1;
+  state.cart.forEach(function (item, i) { if (item.id === id) index = i; });
+  if (index < 0) return;
+  if (state.cart[index].count > 1) state.cart[index].count -= 1;
+  else state.cart.splice(index, 1);
+  render();
+}
+
+let toastTimer = null;
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.add("toast--on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { el.classList.remove("toast--on"); }, 1600);
+}
+
+function visibleDishes() {
+  const keyword = state.keyword.trim();
+  return DISHES.filter(function (dish) {
+    if (state.category !== "all" && dish.category !== state.category) return false;
+    if (keyword) {
+      const hit = dish.name.indexOf(keyword) >= 0 || dish.desc.indexOf(keyword) >= 0 || dish.tags.join("").indexOf(keyword) >= 0;
+      if (!hit) return false;
+    }
+    return true;
+  });
+}
+
+function dishCard(dish) {
+  const count = cartCountOf(dish.id);
+  const spicy = SPICY_TEXT[dish.spicy] || "";
+  const ops = dish.soldOut
+    ? '<span class="dish__soldout">售罄</span>'
+    : (count > 0
+      ? '<button class="op op--minus" data-minus="' + dish.id + '">−</button><span class="op-num">' + count + '</span><button class="op op--add" data-plus="' + dish.id + '">＋</button>'
+      : '<button class="op op--add" data-plus="' + dish.id + '">＋</button>');
+
+  return '<div class="dish' + (dish.soldOut ? " dish--soldout" : "") + '" data-dish="' + dish.id + '">' +
+    '<div class="dish__thumb">' + dish.emoji + '</div>' +
+    '<div class="dish__body">' +
+      '<div class="dish__title"><span class="dish__name">' + dish.name + '</span>' +
+        (spicy ? '<span class="dish__spicy">' + spicy + '</span>' : '') + '</div>' +
+      '<div class="dish__desc">' + dish.desc + '</div>' +
+      '<div class="dish__meta">' + dish.tags.map(function (t) { return '<span class="chip">' + t + '</span>'; }).join("") +
+        '<span class="dish__min">⏱ ' + dish.minutes + ' 分钟</span></div>' +
+    '</div>' +
+    '<div class="dish__ops">' + ops + '</div></div>';
+}
+
+function viewMenu() {
+  const hour = new Date().getHours();
+  const greet = hour < 5 ? "这么晚还没睡呀" : hour < 11 ? "早上好呀" : hour < 14 ? "中午好呀" : hour < 18 ? "下午好呀" : "晚上好呀";
+  const list = visibleDishes();
+  const sorted = list.slice().sort(function (a, b) { return (a.soldOut ? 1 : 0) - (b.soldOut ? 1 : 0); });
+  const signboard = state.category === "all" && !state.keyword.trim()
+    ? DISHES.filter(function (d) { return d.tags.indexOf("招牌") >= 0 && !d.soldOut; }).slice(0, 3)
+    : [];
+
+  const cat = CATEGORIES.filter(function (c) { return c.id === state.category; })[0] || CATEGORIES[0];
+  const listTitle = state.category === "all" ? "全部菜单" : cat.name + " · " + list.length + " 道";
+
+  const prefParts = [SPICY_LABELS[state.spicy]];
+  if (state.dislikes.length) prefParts.push("不吃" + state.dislikes.join("、"));
+
+  return '<div class="hero">' +
+      '<div class="hero__greet">' + greet + '</div>' +
+      '<div class="hero__title">今天想吃什么？</div>' +
+      '<div class="hero__sub">小可爱，今天想让大厨做点什么？</div>' +
+      '<div class="hero__emoji">🍳</div>' +
+    '</div>' +
+    '<div class="search"><span class="search__icon">🔍</span>' +
+      '<input id="searchInput" value="' + state.keyword + '" placeholder="搜菜名，比如「番茄」" />' +
+      (state.keyword ? '<button class="search__clear" id="clearSearch">✕</button>' : '') +
+    '</div>' +
+    '<div class="cats">' + CATEGORIES.map(function (c) {
+      return '<button class="cat' + (state.category === c.id ? " cat--on" : "") + '" data-cat="' + c.id + '">' +
+        '<span>' + c.emoji + '</span><span>' + c.name + '</span></button>';
+    }).join("") + '</div>' +
+    '<div class="pref-hint">💡 大厨记得你的口味：' + prefParts.join(" · ") + '</div>' +
+    (signboard.length ? '<div class="section-title">本店招牌</div>' + signboard.map(dishCard).join("") : '') +
+    '<div class="section-title">' + listTitle + '</div>' +
+    (sorted.length
+      ? sorted.map(dishCard).join("")
+      : '<div class="empty"><div class="empty__emoji">🥺</div><div class="empty__text">没找到这道菜</div><div class="empty__hint">换个关键词，或者切回「全部」看看</div></div>');
+}
+
+function nextStatus(key) {
+  const i = FLOW.indexOf(key);
+  return i < 0 || i >= FLOW.length - 1 ? "" : FLOW[i + 1];
+}
+
+function actionText(key) {
+  return key === "pending" ? "接单开做" : key === "cooking" ? "做好啦" : "";
+}
+
+function orderCounts() {
+  const c = { pending: 0, cooking: 0, done: 0 };
+  state.orders.forEach(function (o) { if (c[o.status] !== undefined) c[o.status] += 1; });
+  return c;
+}
+
+function viewOrders() {
+  const c = orderCounts();
+  const list = state.orders.filter(function (o) { return state.orderTab === "all" || o.status === state.orderTab; });
+
+  const cards = list.map(function (o) {
+    const meta = STATUS[o.status];
+    return '<div class="order" data-order="' + o.id + '">' +
+        '<div class="order__head"><span class="order__no">No.' + o.no + '</span>' +
+          '<span class="badge" style="background:' + meta.soft + ";color:" + meta.color + '">' + meta.text + '</span></div>' +
+        '<div class="order__summary">' + o.summary + '</div>' +
+        '<div class="order__foot"><span>' + relativeTime(o.createdAt) + ' · 共 ' + o.count + ' 份</span>' +
+          (o.urgeCount > 0 ? '<span class="order__urge">已催 ' + o.urgeCount + ' 次</span>' : '') + '</div>' +
+        (o.remark ? '<div class="order__remark">备注：' + o.remark + '</div>' : '') +
+        (state.isChef && actionText(o.status)
+          ? '<div class="order__ops"><button class="btn btn--primary order__btn" data-advance="' + o.id + '">' + actionText(o.status) + '</button></div>'
+          : '') +
+      '</div>';
+  }).join("");
+
+  return '<div class="summary">' +
+      '<div class="summary__item"><span class="summary__num">' + c.pending + '</span><span class="summary__label">待接单</span></div>' +
+      '<div class="summary__line"></div>' +
+      '<div class="summary__item"><span class="summary__num">' + c.cooking + '</span><span class="summary__label">制作中</span></div>' +
+      '<div class="summary__line"></div>' +
+      '<div class="summary__item"><span class="summary__num">' + c.done + '</span><span class="summary__label">已完成</span></div>' +
+    '</div>' +
+    '<div class="tabs">' + ORDER_TABS.map(function (t) {
+      return '<button class="tabs__item' + (state.orderTab === t.id ? " tabs__item--on" : "") + '" data-otab="' + t.id + '">' + t.name + '</button>';
+    }).join("") + '</div>' +
+    (list.length ? cards
+      : '<div class="empty"><div class="empty__emoji">' + (state.isChef ? "🍳" : "🧾") + '</div>' +
+        '<div class="empty__text">' + (state.orderTab === "all" ? "还没有点过菜" : "这里还没有内容") + '</div>' +
+        '<div class="empty__hint">' + (state.isChef ? "她不点菜的时候，就歇一会儿吧" : "去「点菜」页挑几道爱吃的吧") + '</div></div>');
+}
+
+function viewOrderDetail() {
+  const order = state.orders.filter(function (o) { return o.id === state.detailId; })[0];
+  if (!order) return '<div class="empty"><div class="empty__emoji">🫥</div><div class="empty__text">找不到这个订单</div></div>';
+
+  const meta = STATUS[order.status];
+  const emoji = order.status === "done" ? "🍽" : order.status === "cancel" ? "💤" : "🍳";
+  const running = order.status === "pending" || order.status === "cooking";
+  const canCancel = !state.isChef && order.status === "pending";
+
+  const items = order.items.map(function (it) {
+    return '<div class="item"><span class="item__emoji">' + it.emoji + '</span><span class="item__name">' + it.name +
+      '</span><span class="item__count">×' + it.count + '</span></div>';
+  }).join("");
+
+  const timeline = order.timeline.slice().reverse().map(function (t) {
+    const m = STATUS[t.status];
+    return '<div class="tl"><span class="tl__dot" style="background:' + m.color + '"></span><div><div class="tl__text">' +
+      m.step + '</div><div class="tl__time">' + formatTime(t.at) + '</div></div></div>';
+  }).join("");
+
+  let actions = "";
+  if (state.isChef) {
+    actions = actionText(order.status) ? '<button class="btn btn--primary" data-advance="' + order.id + '">' + actionText(order.status) + '</button>' : "";
+  } else {
+    if (canCancel) actions += '<button class="btn btn--plain" data-cancel="' + order.id + '">取消点菜</button>';
+    if (running) actions += '<button class="btn btn--ghost" data-urge="' + order.id + '">催一催</button>';
+  }
+
+  return '<button class="back" id="backToList">‹ 返回订单</button>' +
+    '<div class="detail-hero"><div class="detail-hero__emoji">' + emoji + '</div>' +
+      '<div class="detail-hero__status" style="color:' + meta.color + '">' + meta.text + '</div>' +
+      '<div class="detail-hero__desc">' + meta.desc + '</div>' +
+      '<div class="detail-hero__no">No.' + order.no + '</div></div>' +
+    (order.urgeCount > 0 ? '<div class="pref-hint">已经催了 ' + order.urgeCount + ' 次，大厨看到啦 👀</div>' : '') +
+    '<div class="section-title">点了这些</div>' +
+    '<div class="card" style="margin-top:0">' + items +
+      '<div class="item item--total"><span class="item__name">合计</span><span class="item__total">共 ' + order.count + ' 份 · ' + order.dishCount + ' 道菜</span></div></div>' +
+    '<div class="section-title">给大厨的话</div>' +
+    '<div class="card" style="margin-top:0">' +
+      '<div class="info-row"><span class="info-label">期望时间</span><span class="info-value">' + order.expectTime + '</span></div>' +
+      '<div class="info-row"><span class="info-label">备注</span><span class="info-value">' + (order.remark || "没有特别要求") + '</span></div>' +
+      '<div class="info-row"><span class="info-label">下单时间</span><span class="info-value">' + formatTime(order.createdAt) + '</span></div></div>' +
+    '<div class="section-title">进度</div>' +
+    '<div class="card" style="margin-top:0">' + timeline + '</div>' +
+    (actions ? '<div class="actions">' + actions + '</div>' : '') +
+    '<div class="actions"><button class="btn btn--plain" style="flex:1" data-reorder="' + order.id + '">照这个再来一单</button></div>';
+}
+
+function viewFavorites() {
+  const list = state.favorites.map(dishById).filter(Boolean);
+  return '<div style="padding:4px 2px 12px"><div style="font-size:18px;font-weight:700;color:#5a3324">她爱吃的都在这</div>' +
+    '<div class="row-sub">点菜品卡可以取消收藏</div></div>' +
+    (list.length ? list.map(dishCard).join("")
+      : '<div class="empty"><div class="empty__emoji">💛</div><div class="empty__text">还没有收藏的菜</div><div class="empty__hint">在点菜页点一下菜品卡就能收藏</div></div>');
+}
+
+function viewMy() {
+  const totalOrders = state.orders.filter(function (o) { return o.status !== "cancel"; }).length;
+  const totalDishes = state.orders.reduce(function (s, o) { return o.status === "cancel" ? s : s + o.count; }, 0);
+
+  return '<div class="profile"><div class="profile__avatar">🙋</div><div>' +
+      '<div class="profile__nick">小可爱</div>' +
+      '<div class="profile__tag">' + (state.isChef ? "当前身份：大厨 👨‍🍳" : "当前身份：点菜的小可爱 🙋") + '</div></div></div>' +
+    '<div class="stats">' +
+      '<div class="stats__item"><span class="stats__num">' + totalOrders + '</span><span class="stats__label">点过的单</span></div>' +
+      '<div class="stats__line"></div>' +
+      '<div class="stats__item"><span class="stats__num">' + totalDishes + '</span><span class="stats__label">吃掉的份数</span></div>' +
+      '<div class="stats__line"></div>' +
+      '<div class="stats__item"><span class="stats__num">' + state.favorites.length + '</span><span class="stats__label">收藏的菜</span></div></div>' +
+    '<div class="section-title">大厨模式</div>' +
+    '<div class="card row-between" style="margin-top:0"><div>' +
+      '<div class="row-title">我来当大厨</div>' +
+      '<div class="row-sub">打开后可以在订单里接单、标记做好</div></div>' +
+      '<button class="switch' + (state.isChef ? " switch--on" : "") + '" data-toggle-chef></button></div>' +
+    '<div class="section-title">我的口味</div>' +
+    '<div class="card" style="margin-top:0">' +
+      '<div class="field__label">辣度</div><div class="pchips">' + SPICY_LABELS.map(function (s, i) {
+        return '<button class="pchip' + (state.spicy === i ? " pchip--on" : "") + '" data-spicy="' + i + '">' + s + '</button>';
+      }).join("") + '</div>' +
+      '<div class="field__label" style="margin-top:13px">不吃这些</div><div class="pchips">' + DISLIKE_OPTIONS.map(function (name) {
+        return '<button class="pchip' + (state.dislikes.indexOf(name) >= 0 ? " pchip--on" : "") + '" data-dislike="' + name + '">' + name + '</button>';
+      }).join("") + '</div></div>' +
+    '<div class="card row-between" style="margin-top:12px"><div>' +
+      '<div class="row-title">我们的小家</div>' +
+      '<div class="row-sub">配对后两台手机自动同步</div></div>' +
+      '<span style="color:var(--text-weak);font-size:19px">›</span></div>' +
+    '<div class="empty" style="padding:28px 20px 10px"><div class="empty__hint">这是网页预览版 · 正式版在小程序里</div></div>';
+}
+
+function viewSheet() {
+  const items = state.cart.map(function (i) {
+    const dish = dishById(i.id);
+    return '<div class="sitem"><span class="sitem__emoji">' + dish.emoji + '</span>' +
+      '<div class="sitem__body"><div class="sitem__name">' + dish.name + '</div><div class="sitem__desc">' + dish.desc + '</div></div>' +
+      '<div class="sitem__ops"><button class="op op--minus" data-minus="' + dish.id + '">−</button>' +
+        '<span class="op-num">' + i.count + '</span>' +
+        '<button class="op op--add" data-plus="' + dish.id + '">＋</button></div></div>';
+  }).join("");
+
+  return '<div class="sheet__head"><span class="sheet__title">我的菜单</span>' +
+      (state.cart.length ? '<button class="sheet__clear" id="clearCart">清空</button>' : '') + '</div>' +
+    '<div class="sheet__list">' + (state.cart.length ? items
+      : '<div class="empty" style="padding:36px 20px"><div class="empty__emoji">🛒</div><div class="empty__text">菜单空啦</div></div>') + '</div>' +
+    '<div class="sheet__form"><div class="field"><span class="field__label">什么时候想吃</span>' +
+      '<button class="field__value" id="pickTime">' + state.expectTime + ' ›</button></div>' +
+      '<textarea class="field__textarea" id="remarkInput" maxlength="60" placeholder="有什么想跟大厨说的？比如「少放辣」">' + state.remark + '</textarea></div>' +
+    '<div class="sheet__foot"><span class="sheet__total">共 ' + state.cart.length + ' 道菜 · ' + cartCount() + ' 份</span>' +
+      '<button class="btn btn--primary" id="submitOrder">告诉大厨 🍳</button></div>';
+}
+
+function render() {
+  const screen = $("screen");
+  const scrollTop = screen.scrollTop;
+  const active = $("searchInput");
+  const hadFocus = document.activeElement === active;
+  const caret = hadFocus ? active.selectionStart : null;
+
+  if (state.view === "menu") screen.innerHTML = viewMenu();
+  else if (state.view === "orders") screen.innerHTML = state.detailId ? viewOrderDetail() : viewOrders();
+  else if (state.view === "favorites") screen.innerHTML = viewFavorites();
+  else screen.innerHTML = viewMy();
+
+  screen.scrollTop = scrollTop;
+
+  if (hadFocus) {
+    const next = $("searchInput");
+    if (next) {
+      next.focus();
+      if (caret !== null) next.setSelectionRange(caret, caret);
+    }
+  }
+
+  $("navbar").textContent = state.detailId ? "订单详情" : NAV_TITLE[state.view];
+
+  const count = cartCount();
+  $("cartBadge").textContent = count;
+  $("cartTitle").textContent = "已点 " + count + " 份";
+  $("cartbar").classList.toggle("cartbar--on", count > 0 && state.view === "menu");
+
+  const pending = orderCounts().pending;
+  $("tabbar").innerHTML = TABS.map(function (t) {
+    return '<button class="tab' + (state.view === t.id ? " tab--on" : "") + '" data-tab="' + t.id + '">' +
+      '<span class="tab__icon">' + t.icon +
+        (t.id === "orders" && pending > 0 ? '<span class="tab__badge">' + pending + '</span>' : '') +
+      '</span><span>' + t.text + '</span></button>';
+  }).join("");
+
+  $("sheet").innerHTML = viewSheet();
+  $("mask").classList.toggle("mask--on", state.showCart);
+  $("sheet").classList.toggle("sheet--on", state.showCart);
+}
+
+const CLICK_SELECTOR = "[data-cat],[data-plus],[data-minus],[data-dish],[data-tab],[data-otab],[data-order],[data-advance],[data-cancel],[data-urge],[data-reorder],[data-spicy],[data-dislike],[data-toggle-chef],#clearSearch,#clearCart,#submitOrder,#pickTime,#backToList";
+
+document.addEventListener("click", function (e) {
+  const el = e.target.closest(CLICK_SELECTOR);
+  if (!el) return;
+  const ds = el.dataset;
+
+  if (ds.cat) { state.category = ds.cat; state.keyword = ""; render(); return; }
+  if (ds.plus) { e.stopPropagation(); addToCart(ds.plus); return; }
+  if (ds.minus) { e.stopPropagation(); removeFromCart(ds.minus); return; }
+
+  if (ds.dish) {
+    const index = state.favorites.indexOf(ds.dish);
+    if (index >= 0) { state.favorites.splice(index, 1); toast("取消收藏"); }
+    else { state.favorites.unshift(ds.dish); toast("已收藏 💛"); }
+    render();
+    return;
+  }
+
+  if (ds.tab) { state.view = ds.tab; state.detailId = null; state.showCart = false; render(); return; }
+  if (ds.otab) { state.orderTab = ds.otab; render(); return; }
+  if (ds.order) { state.detailId = ds.order; render(); $("screen").scrollTop = 0; return; }
+  if (el.id === "backToList") { state.detailId = null; render(); return; }
+
+  if (ds.advance) {
+    e.stopPropagation();
+    const order = state.orders.filter(function (o) { return o.id === ds.advance; })[0];
+    const next = nextStatus(order.status);
+    if (next) {
+      order.status = next;
+      order.timeline.push({ status: next, at: Date.now() });
+      toast(next === "cooking" ? "接单啦，开做！" : "做好啦，喊她吃饭");
+    }
+    render();
+    return;
+  }
+
+  if (ds.cancel) {
+    const order = state.orders.filter(function (o) { return o.id === ds.cancel; })[0];
+    order.status = "cancel";
+    order.timeline.push({ status: "cancel", at: Date.now() });
+    toast("已取消");
+    render();
+    return;
+  }
+
+  if (ds.urge) {
+    const order = state.orders.filter(function (o) { return o.id === ds.urge; })[0];
+    order.urgeCount = (order.urgeCount || 0) + 1;
+    toast(order.urgeCount === 1 ? "已经帮你催啦 🥺" : "再催一次，大厨加速中 🔥");
+    render();
+    return;
+  }
+
+  if (ds.reorder) {
+    const order = state.orders.filter(function (o) { return o.id === ds.reorder; })[0];
+    order.items.forEach(function (it) {
+      const dish = dishById(it.id);
+      if (!dish || dish.soldOut) return;
+      for (let i = 0; i < it.count; i++) {
+        const existing = state.cart.filter(function (c) { return c.id === it.id; })[0];
+        if (existing) existing.count = Math.min(existing.count + 1, 9);
+        else state.cart.push({ id: it.id, count: 1 });
+      }
+    });
+    toast("已放回菜单");
+    state.view = "menu";
+    state.detailId = null;
+    render();
+    return;
+  }
+
+  if (el.hasAttribute("data-toggle-chef")) {
+    state.isChef = !state.isChef;
+    toast(state.isChef ? "已切换成大厨 👨‍🍳" : "已切换回小可爱 🙋");
+    render();
+    return;
+  }
+
+  if (ds.spicy !== undefined) { state.spicy = Number(ds.spicy); render(); return; }
+
+  if (ds.dislike) {
+    const i = state.dislikes.indexOf(ds.dislike);
+    if (i >= 0) state.dislikes.splice(i, 1); else state.dislikes.push(ds.dislike);
+    render();
+    return;
+  }
+
+  if (el.id === "clearSearch") { state.keyword = ""; render(); return; }
+  if (el.id === "clearCart") { state.cart = []; toast("已清空"); render(); return; }
+  if (el.id === "pickTime") {
+    const i = TIME_OPTIONS.indexOf(state.expectTime);
+    state.expectTime = TIME_OPTIONS[(i + 1) % TIME_OPTIONS.length];
+    render();
+    return;
+  }
+  if (el.id === "submitOrder") { submitOrder(); return; }
+});
+
+document.addEventListener("input", function (e) {
+  if (e.target.id === "searchInput") {
+    state.keyword = e.target.value;
+    const pos = e.target.selectionStart;
+    render();
+    const next = $("searchInput");
+    if (next) { next.focus(); next.setSelectionRange(pos, pos); }
+    return;
+  }
+  if (e.target.id === "remarkInput") {
+    state.remark = e.target.value;
+  }
+});
+
+function submitOrder() {
+  if (state.cart.length === 0) { toast("还没点菜呢"); return; }
+  const items = state.cart.map(function (i) {
+    const dish = dishById(i.id);
+    return { id: dish.id, name: dish.name, emoji: dish.emoji, count: i.count };
+  });
+  const now = Date.now();
+  const d = new Date(now);
+  const count = items.reduce(function (s, i) { return s + i.count; }, 0);
+  const order = {
+    id: "o_" + now.toString(36),
+    no: "" + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + "-" + Math.floor(Math.random() * 9000 + 1000),
+    items: items,
+    count: count,
+    dishCount: items.length,
+    summary: items.map(function (i) { return i.name + " ×" + i.count; }).join("、"),
+    remark: state.remark.trim(),
+    expectTime: state.expectTime,
+    status: "pending",
+    urgeCount: 0,
+    createdAt: now,
+    updatedAt: now,
+    timeline: [{ status: "pending", at: now }]
+  };
+  state.orders.unshift(order);
+  state.cart = [];
+  state.remark = "";
+  state.expectTime = TIME_OPTIONS[0];
+  state.showCart = false;
+  state.view = "orders";
+  state.orderTab = "all";
+  state.detailId = order.id;
+  render();
+  $("screen").scrollTop = 0;
+  toast("已告诉大厨啦 🍳");
+}
+
+$("cartbar").addEventListener("click", function () {
+  if (cartCount() === 0) return;
+  state.showCart = true;
+  render();
+});
+
+$("mask").addEventListener("click", function () {
+  state.showCart = false;
+  render();
+});
+
+function tick() {
+  const d = new Date();
+  $("clock").textContent = d.getHours() + ":" + pad(d.getMinutes());
+}
+
+tick();
+setInterval(tick, 20000);
+
+/* 支持 ?view=orders 直接打开某个页面、?demo=1 灌两条示例订单，方便截图和演示 */
+function seedDemo() {
+  const base = Date.now() - 26 * 60 * 1000;
+  state.orders = [
+    {
+      id: "demo_1",
+      no: "20260916-2371",
+      items: [
+        { id: "kele-jichi", name: "可乐鸡翅", emoji: "🍗", count: 2 },
+        { id: "fanqie-chaodan", name: "番茄炒蛋", emoji: "🍅", count: 1 },
+        { id: "fanqie-danhua-tang", name: "番茄蛋花汤", emoji: "🍲", count: 1 }
+      ],
+      count: 4,
+      dishCount: 3,
+      summary: "可乐鸡翅 ×2、番茄炒蛋 ×1、番茄蛋花汤 ×1",
+      remark: "鸡翅多一点汤汁，谢谢大厨～",
+      expectTime: "30 分钟后",
+      status: "cooking",
+      urgeCount: 1,
+      createdAt: base,
+      updatedAt: base + 6 * 60 * 1000,
+      timeline: [
+        { status: "pending", at: base },
+        { status: "cooking", at: base + 6 * 60 * 1000 }
+      ]
+    },
+    {
+      id: "demo_2",
+      no: "20260915-8820",
+      items: [
+        { id: "mapo-doufu", name: "麻婆豆腐", emoji: "🌶️", count: 1 },
+        { id: "dan-chaofan", name: "黄金蛋炒饭", emoji: "🍚", count: 2 }
+      ],
+      count: 3,
+      dishCount: 2,
+      summary: "麻婆豆腐 ×1、黄金蛋炒饭 ×2",
+      remark: "",
+      expectTime: "尽快",
+      status: "done",
+      urgeCount: 0,
+      createdAt: base - 22 * 60 * 60 * 1000,
+      updatedAt: base - 21 * 60 * 60 * 1000,
+      timeline: [
+        { status: "pending", at: base - 22 * 60 * 60 * 1000 },
+        { status: "cooking", at: base - 21.6 * 60 * 60 * 1000 },
+        { status: "done", at: base - 21 * 60 * 60 * 1000 }
+      ]
+    }
+  ];
+}
+
+const params = new URLSearchParams(location.search);
+if (params.get("demo") === "1") {
+  seedDemo();
+  if (params.get("chef") === "1") state.isChef = true;
+}
+const wantedView = params.get("view");
+if (wantedView && NAV_TITLE[wantedView]) state.view = wantedView;
+if (params.get("sheet") === "1" && state.orders.length) {
+  state.cart = [{ id: "kele-jichi", count: 2 }, { id: "fanqie-chaodan", count: 1 }];
+  state.showCart = true;
+  state.remark = "少放辣，多留点汤";
+}
+if (params.get("order") === "1" && state.orders.length) {
+  state.view = "orders";
+  state.detailId = state.orders[0].id;
+}
+
+render();
+</script>
+</body>
+</html>

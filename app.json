@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/orders/orders",
+    "pages/favorites/favorites",
+    "pages/my/my",
+    "pages/dish-detail/dish-detail",
+    "pages/order-detail/order-detail",
+    "pages/menu-manage/menu-manage",
+    "pages/dish-edit/dish-edit",
+    "pages/pair/pair"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "backgroundColor": "#fff8f3",
+    "navigationBarBackgroundColor": "#fff8f3",
+    "navigationBarTitleText": "今天想吃什么",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#9a8f8a",
+    "selectedColor": "#ff6b4a",
+    "backgroundColor": "#ffffff",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "点菜" },
+      { "pagePath": "pages/orders/orders", "text": "订单" },
+      { "pagePath": "pages/favorites/favorites", "text": "收藏" },
+      { "pagePath": "pages/my/my", "text": "我的" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

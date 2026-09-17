@@ -1,0 +1,15 @@
+<view class="tabbar">
+  <view
+    class="tab {{selected === index ? 'tab--on' : ''}}"
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    data-index="{{index}}"
+    bindtap="onTap"
+  >
+    <view class="tab__icon-wrap">
+      <text class="tab__icon">{{item.icon}}</text>
+      <text wx:if="{{item.badge > 0}}" class="tab__badge">{{item.badge}}</text>
+    </view>
+    <text class="tab__text">{{item.text}}</text>
+  </view>
+</view>

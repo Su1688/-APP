@@ -1,0 +1,90 @@
+<block wx:if="{{order}}">
+  <view class="page">
+    <view class="hero">
+      <view class="hero__emoji">{{statusMeta.key === 'done' ? '🍽' : statusMeta.key === 'cancel' ? '💤' : '🍳'}}</view>
+      <view class="hero__status" style="color:{{statusMeta.color}}">{{statusMeta.text}}</view>
+      <view class="hero__desc">{{statusMeta.desc}}</view>
+      <view class="hero__no">No.{{order.no}}</view>
+    </view>
+
+    <view wx:if="{{order.urgeCount > 0}}" class="urge-tip">
+      已经催了 {{order.urgeCount}} 次，大厨看到啦 👀
+    </view>
+
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>点了这些</text>
+    </view>
+    <view class="card items">
+      <view class="item" wx:for="{{order.items}}" wx:key="id">
+        <text class="item__emoji">{{item.emoji}}</text>
+        <text class="item__name flex-1">{{item.name}}</text>
+        <text class="item__count">×{{item.count}}</text>
+      </view>
+      <view class="item item--total">
+        <text class="flex-1">合计</text>
+        <text class="item__total">共 {{order.count}} 份 · {{order.dishCount}} 道菜</text>
+      </view>
+    </view>
+
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>给大厨的话</text>
+    </view>
+    <view class="card info">
+      <view class="info__row">
+        <text class="info__label">期望时间</text>
+        <text class="info__value">{{order.expectTime}}</text>
+      </view>
+      <view class="info__row">
+        <text class="info__label">备注</text>
+        <text class="info__value">{{order.remark ? order.remark : '没有特别要求'}}</text>
+      </view>
+      <view class="info__row">
+        <text class="info__label">下单时间</text>
+        <text class="info__value">{{createdAtText}}</text>
+      </view>
+    </view>
+
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>进度</text>
+    </view>
+    <view class="card timeline">
+      <view class="tl" wx:for="{{timeline}}" wx:key="key">
+        <view class="tl__dot" style="background:{{item.color}}"></view>
+        <view class="tl__body">
+          <view class="tl__text">{{item.text}}</view>
+          <view class="tl__time">{{item.time}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <view wx:if="{{!isChef && canCancel}}" class="btn btn--plain actions__btn" bindtap="onCancel">
+        取消点菜
+      </view>
+      <view wx:if="{{canUrge}}" class="btn btn--ghost actions__btn" bindtap="onUrge">
+        催一催
+      </view>
+      <view wx:if="{{isChef && actionText}}" class="btn btn--primary actions__btn" bindtap="onAdvance">
+        {{actionText}}
+      </view>
+    </view>
+
+    <view class="btn btn--plain actions__btn actions__btn--wide" bindtap="onReorder">
+      照这个再来一单
+    </view>
+
+    <view class="actions__tip">
+      {{isChef ? '做完记得在「我的」里切回小可爱身份哦' : '在「我的」里打开大厨模式，就能自己接单啦'}}
+    </view>
+  </view>
+</block>
+
+<empty-state
+  wx:else
+  emoji="🫥"
+  text="找不到这个订单"
+  hint="它可能已经被清理掉了"
+/>

@@ -1,0 +1,79 @@
+<block wx:if="{{dish}}">
+  <view class="page detail">
+    <view class="top {{soldOut ? 'top--out' : ''}}">
+      <image wx:if="{{dish.image}}" class="top__img" src="{{dish.image}}" mode="aspectFill" />
+      <view wx:else class="top__emoji">{{dish.emoji}}</view>
+      <view class="top__fav {{fav ? 'top__fav--on' : ''}}" bindtap="onToggleFav">
+        {{fav ? '💛' : '🤍'}}
+      </view>
+    </view>
+
+    <view wx:if="{{soldOut}}" class="out-banner">今日售罄 · 明天再让大厨给你做吧</view>
+
+    <view class="head">
+      <view class="head__name-row">
+        <text class="head__name">{{dish.name}}</text>
+        <text wx:if="{{dish.spicy > 0}}" class="head__spicy">{{spicyText}}</text>
+      </view>
+      <view class="head__desc">{{dish.desc}}</view>
+      <view class="head__tags">
+        <text class="chip" wx:for="{{dish.tags}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="facts">
+      <view class="fact">
+        <text class="fact__num">{{dish.minutes}}</text>
+        <text class="fact__label">分钟</text>
+      </view>
+      <view class="fact">
+        <text class="fact__num">{{levelText}}</text>
+        <text class="fact__label">难度</text>
+      </view>
+      <view class="fact">
+        <text class="fact__num">{{categoryName}}</text>
+        <text class="fact__label">分类</text>
+      </view>
+    </view>
+
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>需要这些食材</text>
+    </view>
+    <view class="card block">
+      <view class="ing" wx:for="{{dish.ingredients}}" wx:key="*this">
+        <view class="ing__dot"></view>
+        <text>{{item}}</text>
+      </view>
+    </view>
+
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>大厨的做法</text>
+    </view>
+    <view class="card block">
+      <view class="step" wx:for="{{dish.steps}}" wx:key="*this">
+        <view class="step__no">{{index + 1}}</view>
+        <text class="step__text">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </view>
+
+  <view class="bar">
+    <view class="bar__left">
+      <block wx:if="{{!soldOut}}">
+        <view wx:if="{{count > 0}}" class="op op--minus" bindtap="onMinus">−</view>
+        <text wx:if="{{count > 0}}" class="op-num">{{count}}</text>
+        <view class="op op--add" bindtap="onAdd">＋</view>
+      </block>
+      <text wx:else class="bar__out">今天做不了啦</text>
+    </view>
+    <view class="btn bar__btn {{soldOut ? 'btn--plain' : 'btn--primary'}}" bindtap="goCart">
+      {{soldOut ? '去换一道' : (count > 0 ? '已加入菜单 ' + count + ' 份' : '加入菜单')}}
+    </view>
+  </view>
+</block>
+
+<empty-state wx:else emoji="🫥" text="找不到这道菜" hint="它可能已经从菜单上撤掉了" />

@@ -1,0 +1,25 @@
+<view class="page page--tabbar">
+  <view class="head">
+    <view class="head__title">她爱吃的都在这</view>
+    <view wx:if="{{tip}}" class="head__tip">{{tip}}</view>
+  </view>
+
+  <dish-card
+    wx:for="{{list}}"
+    wx:key="id"
+    dish="{{item}}"
+    count="{{item.count}}"
+    bind:add="onAdd"
+    bind:minus="onMinus"
+    bind:tapdish="onOpenDish"
+  />
+
+  <block wx:if="{{list.length === 0}}">
+    <empty-state
+      emoji="💛"
+      text="还没有收藏的菜"
+      hint="在菜品详情页点一下爱心，就能收藏啦"
+    />
+    <view class="go" bindtap="goDishes">去挑几道菜</view>
+  </block>
+</view>

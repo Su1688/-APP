@@ -1,0 +1,126 @@
+<view class="page page--tabbar">
+  <view class="profile">
+    <button class="profile__avatar" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{profile.avatar}}" class="profile__img" src="{{profile.avatar}}" mode="aspectFill" />
+      <text wx:else class="profile__emoji">🙋</text>
+    </button>
+    <view class="profile__body flex-1">
+      <input
+        class="profile__nick"
+        type="nickname"
+        value="{{profile.nick}}"
+        placeholder="点这里改名字"
+        bindblur="onNickInput"
+      />
+      <view class="profile__tag">{{isChef ? '当前身份：大厨 👨‍🍳' : '当前身份：点菜的小可爱 🙋'}}</view>
+    </view>
+  </view>
+
+  <view class="stats">
+    <view class="stats__item">
+      <text class="stats__num">{{stats.orderCount}}</text>
+      <text class="stats__label">点过的单</text>
+    </view>
+    <view class="stats__line"></view>
+    <view class="stats__item">
+      <text class="stats__num">{{stats.dishTotal}}</text>
+      <text class="stats__label">吃掉的份数</text>
+    </view>
+    <view class="stats__line"></view>
+    <view class="stats__item">
+      <text class="stats__num">{{stats.dishKinds}}</text>
+      <text class="stats__label">尝过的菜</text>
+    </view>
+  </view>
+
+  <view wx:if="{{stats.topDish}}" class="favor card">
+    <text class="favor__emoji">{{stats.topDish.emoji}}</text>
+    <view class="favor__body flex-1">
+      <view class="favor__title">最常点的是「{{stats.topDish.name}}」</view>
+      <view class="favor__sub">已经点过 {{stats.topCount}} 次啦</view>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <view class="section-title__bar"></view>
+    <text>大厨模式</text>
+  </view>
+  <view class="card switch-card">
+    <view class="flex-1">
+      <view class="switch-card__title">我来当大厨</view>
+      <view class="switch-card__sub">打开后可以在订单里接单、标记做好</view>
+    </view>
+    <switch checked="{{isChef}}" color="#ff6b4a" bindchange="onToggleRole" />
+  </view>
+
+  <view class="card switch-card switch-card--link" bindtap="goMenuManage">
+    <view class="flex-1">
+      <view class="switch-card__title">菜单管理</view>
+      <view class="switch-card__sub">
+        加菜、改菜、售罄、下架 · 现有 {{menuStats.total}} 道菜
+      </view>
+    </view>
+    <text class="switch-card__arrow">›</text>
+  </view>
+
+  <view class="section-title">
+    <view class="section-title__bar"></view>
+    <text>我的口味</text>
+  </view>
+  <view class="card pref">
+    <view class="pref__label">辣度</view>
+    <view class="pref__chips">
+      <view
+        class="pchip {{spicyIndex === index ? 'pchip--on' : ''}}"
+        wx:for="{{spicyOptions}}"
+        wx:key="*this"
+        data-index="{{index}}"
+        bindtap="onSpicy"
+      >
+        {{item}}
+      </view>
+    </view>
+
+    <view class="pref__label pref__label--gap">不吃这些</view>
+    <view class="pref__chips">
+      <view
+        class="pchip {{item.on ? 'pchip--on' : ''}}"
+        wx:for="{{dislikeOptions}}"
+        wx:key="name"
+        data-name="{{item.name}}"
+        bindtap="onToggleDislike"
+      >
+        {{item.name}}
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">
+    <view class="section-title__bar"></view>
+    <text>我们的小家</text>
+  </view>
+  <view class="card switch-card switch-card--link" bindtap="goPair">
+    <view class="flex-1">
+      <view class="switch-card__title">{{kitchen ? '已连接 🏡' : '还没连接 🏡'}}</view>
+      <view class="switch-card__sub">{{pairSub}}</view>
+    </view>
+    <text class="switch-card__arrow">›</text>
+  </view>
+
+  <view class="section-title">
+    <view class="section-title__bar"></view>
+    <text>设置</text>
+  </view>
+  <view class="card setting">
+    <view class="setting__row" bindtap="onReset">
+      <text>清空所有数据</text>
+      <text class="setting__arrow">›</text>
+    </view>
+    <view class="setting__row setting__row--plain">
+      <text>版本</text>
+      <text class="setting__value">v1.0.0</text>
+    </view>
+  </view>
+
+  <view class="foot">用一餐饭，换一句「好吃」🍚</view>
+</view>

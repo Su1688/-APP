@@ -1,0 +1,9 @@
+{
+  "name": "kitchen",
+  "version": "1.0.0",
+  "description": "点菜小程序云函数：小家配对与数据同步",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

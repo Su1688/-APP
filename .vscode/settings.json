@@ -1,0 +1,22 @@
+{
+  "files.associations": {
+    "*.wxml": "html",
+    "*.wxss": "css",
+    "*.wxs": "javascript"
+  },
+  "emmet.includeLanguages": {
+    "wxml": "html"
+  },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/miniprogram_npm": true
+  },
+  "prettier.singleQuote": false,
+  "prettier.semi": true,
+  "prettier.printWidth": 100
+}

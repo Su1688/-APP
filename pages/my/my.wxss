@@ -1,0 +1,199 @@
+.profile {
+  display: flex;
+  align-items: center;
+  padding: 36rpx 32rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #ffe7d9 0%, #ffdcc9 100%);
+}
+
+.profile__avatar {
+  width: 128rpx;
+  height: 128rpx;
+  flex: none;
+  margin: 0 26rpx 0 0;
+  padding: 0;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  line-height: 128rpx;
+}
+
+.profile__img {
+  width: 128rpx;
+  height: 128rpx;
+}
+
+.profile__emoji {
+  font-size: 60rpx;
+  line-height: 128rpx;
+  text-align: center;
+}
+
+.profile__nick {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #5a3324;
+}
+
+.profile__tag {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #a87a63;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+  padding: 30rpx 0;
+  border-radius: 28rpx;
+  background: #fff;
+  box-shadow: 0 10rpx 30rpx rgba(226, 160, 130, 0.14);
+}
+
+.stats__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats__num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #ff6b4a;
+}
+
+.stats__label {
+  margin-top: 6rpx;
+  color: #9a8f8a;
+  font-size: 20rpx;
+}
+
+.stats__line {
+  width: 1rpx;
+  height: 44rpx;
+  background: #f3e9e3;
+}
+
+.favor {
+  display: flex;
+  align-items: center;
+  margin-top: 24rpx;
+  padding: 26rpx 28rpx;
+}
+
+.favor__emoji {
+  margin-right: 22rpx;
+  font-size: 52rpx;
+}
+
+.favor__title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.favor__sub {
+  margin-top: 6rpx;
+  color: #9a8f8a;
+  font-size: 22rpx;
+}
+
+.switch-card {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+}
+
+.switch-card__title {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.switch-card__sub {
+  margin-top: 6rpx;
+  color: #9a8f8a;
+  font-size: 22rpx;
+}
+
+.switch-card--link {
+  margin-top: 20rpx;
+}
+
+.switch-card--link:active {
+  opacity: 0.9;
+}
+
+.switch-card__arrow {
+  color: #bcb2ad;
+  font-size: 34rpx;
+}
+
+.pref {
+  padding: 28rpx;
+}
+
+.pref__label {
+  font-size: 26rpx;
+  color: #6b5f59;
+}
+
+.pref__label--gap {
+  margin-top: 26rpx;
+}
+
+.pref__chips {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16rpx;
+}
+
+.pchip {
+  margin: 0 16rpx 16rpx 0;
+  padding: 12rpx 30rpx;
+  border-radius: 999rpx;
+  background: #f7f1ed;
+  color: #9a8f8a;
+  font-size: 24rpx;
+}
+
+.pchip--on {
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+  box-shadow: 0 8rpx 18rpx rgba(255, 107, 74, 0.26);
+}
+
+.setting {
+  overflow: hidden;
+}
+
+.setting__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 28rpx;
+  font-size: 28rpx;
+  border-bottom: 1rpx solid #f6efeb;
+}
+
+.setting__row--plain {
+  border-bottom: none;
+}
+
+.setting__arrow {
+  color: #bcb2ad;
+  font-size: 32rpx;
+}
+
+.setting__value {
+  color: #bcb2ad;
+  font-size: 24rpx;
+}
+
+.foot {
+  margin: 48rpx 0 20rpx;
+  color: #c9bdb6;
+  font-size: 22rpx;
+  text-align: center;
+}

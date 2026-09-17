@@ -1,0 +1,128 @@
+.dish {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  box-shadow: 0 10rpx 30rpx rgba(226, 160, 130, 0.16);
+}
+
+.dish:active {
+  transform: scale(0.995);
+}
+
+.dish__thumb {
+  width: 104rpx;
+  height: 104rpx;
+  flex: none;
+  margin-right: 22rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(160deg, #fff2e8 0%, #ffe4d6 100%);
+  font-size: 52rpx;
+  line-height: 104rpx;
+  text-align: center;
+  overflow: hidden;
+}
+
+.dish__thumb-img {
+  width: 104rpx;
+  height: 104rpx;
+  display: block;
+}
+
+.dish__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.dish__title {
+  display: flex;
+  align-items: center;
+}
+
+.dish__name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2f2a28;
+}
+
+.dish__spicy {
+  margin-left: 12rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 999rpx;
+  background: #ffe9e2;
+  color: #ff6b4a;
+  font-size: 18rpx;
+}
+
+.dish__desc {
+  margin-top: 6rpx;
+  color: #9a8f8a;
+  font-size: 22rpx;
+}
+
+.dish__meta {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+}
+
+.dish__min {
+  color: #bcb2ad;
+  font-size: 20rpx;
+}
+
+.dish__ops {
+  display: flex;
+  align-items: center;
+  flex: none;
+  margin-left: 16rpx;
+}
+
+.op {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 999rpx;
+  font-size: 32rpx;
+  line-height: 52rpx;
+  text-align: center;
+}
+
+.op:active {
+  transform: scale(0.9);
+}
+
+.op--add {
+  background: linear-gradient(135deg, #ff8a5c 0%, #ff6b4a 100%);
+  color: #fff;
+  box-shadow: 0 6rpx 16rpx rgba(255, 107, 74, 0.3);
+}
+
+.op--minus {
+  border: 1rpx solid #ffd9cd;
+  color: #ff6b4a;
+  background: #fff;
+}
+
+.dish--soldout .dish__thumb {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.dish--soldout .dish__name {
+  color: #9a8f8a;
+}
+
+.dish--soldout .dish__desc,
+.dish--soldout .dish__min {
+  color: #c9bdb6;
+}
+
+.dish__soldout {
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: #f2edeb;
+  color: #9a8f8a;
+  font-size: 22rpx;
+}

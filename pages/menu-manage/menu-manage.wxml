@@ -1,0 +1,74 @@
+<view class="page manage">
+  <view class="stats">
+    <view class="stats__item">
+      <text class="stats__num">{{stats.total}}</text>
+      <text class="stats__label">道菜</text>
+    </view>
+    <view class="stats__line"></view>
+    <view class="stats__item">
+      <text class="stats__num">{{stats.onSale}}</text>
+      <text class="stats__label">在售</text>
+    </view>
+    <view class="stats__line"></view>
+    <view class="stats__item">
+      <text class="stats__num">{{stats.soldOut}}</text>
+      <text class="stats__label">售罄</text>
+    </view>
+    <view class="stats__line"></view>
+    <view class="stats__item">
+      <text class="stats__num">{{stats.custom}}</text>
+      <text class="stats__label">我自己加的</text>
+    </view>
+  </view>
+
+  <scroll-view class="cats" scroll-x show-scrollbar="{{false}}">
+    <view class="cats__inner">
+      <view
+        class="cat {{activeCategory === item.id ? 'cat--on' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onCategory"
+      >
+        {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="row" wx:for="{{list}}" wx:key="id">
+    <view class="row__main" data-id="{{item.id}}" bindtap="onEdit">
+      <text class="row__emoji">{{item.emoji}}</text>
+      <view class="row__body flex-1">
+        <view class="row__title">
+          <text class="row__name">{{item.name}}</text>
+          <text wx:if="{{item.source === 'custom'}}" class="row__flag">自定义</text>
+        </view>
+        <view class="row__meta">{{item.categoryName}} · {{item.minutes}} 分钟 · {{item.spicyText}}</view>
+      </view>
+      <text class="badge row__badge {{item.soldOut ? 'row__badge--out' : ''}}">
+        {{item.soldOut ? '售罄' : '在售'}}
+      </text>
+    </view>
+
+    <view class="row__ops">
+      <view class="mini" data-id="{{item.id}}" catchtap="onEdit">编辑</view>
+      <view class="mini" data-id="{{item.id}}" catchtap="onToggleSoldOut">
+        {{item.soldOut ? '上架' : '售罄'}}
+      </view>
+      <view class="mini mini--danger" data-id="{{item.id}}" catchtap="onDelete">删除</view>
+    </view>
+  </view>
+
+  <empty-state
+    wx:if="{{list.length === 0}}"
+    emoji="🍳"
+    text="这个分类下还没有菜"
+    hint="点下面的按钮加一道吧"
+  />
+
+  <view class="reset" bindtap="onResetMenu">恢复默认菜单</view>
+</view>
+
+<view class="bar">
+  <view class="btn btn--primary bar__btn" bindtap="onCreate">＋ 新增菜品</view>
+</view>

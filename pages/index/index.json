@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "今天想吃什么",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "dish-card": "/components/dish-card/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

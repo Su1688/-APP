@@ -1,0 +1,167 @@
+.page {
+  padding-bottom: calc(60rpx + env(safe-area-inset-bottom));
+}
+
+.hero {
+  padding: 44rpx 32rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #ffe7d9 0%, #ffdcc9 100%);
+  text-align: center;
+}
+
+.hero__emoji {
+  font-size: 88rpx;
+  line-height: 1.1;
+}
+
+.hero__status {
+  margin-top: 12rpx;
+  font-size: 40rpx;
+  font-weight: 700;
+}
+
+.hero__desc {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #a87a63;
+}
+
+.hero__no {
+  margin-top: 18rpx;
+  font-size: 22rpx;
+  color: rgba(168, 122, 99, 0.7);
+}
+
+.urge-tip {
+  margin-top: 24rpx;
+  padding: 18rpx 24rpx;
+  border-radius: 18rpx;
+  background: #fff6e5;
+  color: #b3812f;
+  font-size: 22rpx;
+}
+
+.items,
+.info,
+.timeline {
+  padding: 8rpx 28rpx;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid #f6efeb;
+}
+
+.item__emoji {
+  width: 64rpx;
+  font-size: 36rpx;
+}
+
+.item__name {
+  font-size: 28rpx;
+}
+
+.item__count {
+  color: #9a8f8a;
+  font-size: 26rpx;
+}
+
+.item--total {
+  border-bottom: none;
+  color: #6b5f59;
+  font-size: 24rpx;
+}
+
+.item__total {
+  color: #ff6b4a;
+  font-weight: 600;
+  font-size: 26rpx;
+}
+
+.info {
+  padding: 24rpx 28rpx;
+}
+
+.info__row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+}
+
+.info__label {
+  width: 140rpx;
+  flex: none;
+  color: #9a8f8a;
+  font-size: 24rpx;
+}
+
+.info__value {
+  flex: 1;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.timeline {
+  padding: 28rpx;
+}
+
+.tl {
+  position: relative;
+  display: flex;
+  padding-bottom: 26rpx;
+}
+
+.tl:last-child {
+  padding-bottom: 0;
+}
+
+.tl__dot {
+  width: 16rpx;
+  height: 16rpx;
+  flex: none;
+  margin-top: 10rpx;
+  margin-right: 20rpx;
+  border-radius: 999rpx;
+}
+
+.tl__body {
+  flex: 1;
+}
+
+.tl__text {
+  font-size: 26rpx;
+}
+
+.tl__time {
+  margin-top: 4rpx;
+  color: #bcb2ad;
+  font-size: 20rpx;
+}
+
+.actions {
+  display: flex;
+  margin-top: 36rpx;
+}
+
+.actions__btn {
+  flex: 1;
+  margin-right: 18rpx;
+}
+
+.actions__btn:last-child {
+  margin-right: 0;
+}
+
+.actions__btn--wide {
+  margin-top: 20rpx;
+  width: 100%;
+}
+
+.actions__tip {
+  margin-top: 26rpx;
+  color: #bcb2ad;
+  font-size: 22rpx;
+  text-align: center;
+}
