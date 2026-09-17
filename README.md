@@ -2,6 +2,22 @@
 
 一个给女朋友点菜用的微信小程序：她在手机上挑菜下单，你在「大厨模式」里接单、做完。
 
+## 代码仓库
+
+<https://github.com/Su1688/-APP>
+
+```bash
+git clone https://github.com/Su1688/-APP.git
+```
+
+仓库里带了一份 VS Code 配置（`.vscode/`）：`.wxml` 按 HTML、`.wxss` 按 CSS 高亮，推荐插件
+（WXML Language Service、Prettier）会在打开项目时提示安装，缩进和换行统一成 2 空格 / LF。
+写代码在 VS Code 里 `文件 → 打开文件夹` 选这个目录，编译预览在微信开发者工具里打开同一个目录，
+两边互不干扰，VS Code 存盘后开发者工具会自动重新编译。
+
+`project.private.config.json` 是本机开发者工具的个人设置（项目名、基础库版本），
+已经写进 `.gitignore`，不会进仓库。
+
 ## 功能
 
 - **点菜**：22 道家常菜，7 个分类，支持按菜名 / 描述 / 标签搜索，本店招牌会根据历史点单自动出现
@@ -133,7 +149,7 @@ VW=620 VH=900 SUFFIX=-desktop node preview/shot.mjs
 |------|------|
 | Netlify Drop | 打开 `app.netlify.com/drop`，把 `preview` 文件夹拖进去，登录一次就有 `xxx.netlify.app` |
 | Cloudflare Pages | 需要 Cloudflare 账号，产出 `xxx.pages.dev` |
-| GitHub Pages | 需要 GitHub 仓库，推到仓库后在设置里开 Pages |
+| GitHub Pages | 用本仓库就行，但 Pages 只能选根目录或 `docs/`，得先把 `preview/index.html` 挪过去 |
 | 微信云开发 · 静态网站托管 | 和本项目云函数同一个环境，域名在微信里最稳，但要先装开发者工具 |
 
 > 注意：微信内置浏览器会拦截一部分域名，`netlify.app` / `pages.dev` 通常能开但不保证；
@@ -146,18 +162,19 @@ VW=620 VH=900 SUFFIX=-desktop node preview/shot.mjs
 
 ## 运行
 
-1. 打开微信开发者工具，选择「导入项目」，目录指向本仓库根目录。
-2. `project.config.json` 里的 `appid` 目前是 `touristappid`（游客模式，可直接打开预览）。
-   要真机预览或上传，请换成自己的小程序 AppID。
-3. 编译即可。数据存在本地 Storage，卸载小程序或点「清空所有数据」会重置。
+1. 克隆仓库：`git clone https://github.com/Su1688/-APP.git`，或者从 GitHub 页面「Code → Download ZIP」。
+2. 打开微信开发者工具，选择「导入项目」，目录指向本仓库根目录。
+3. `project.config.json` 里的 `appid` 是 `wx609b29f982871158`，就是这个小程序自己的号。
+   要换成别的号再改它，否则真机预览和上传会被拒绝。
+4. 编译即可。数据存在本地 Storage，卸载小程序或点「清空所有数据」会重置。
 
 此时是**单机模式**，功能完整，但两个人各自看各自的手机。
 
 ## 开启双人同步（云开发）
 
-> 云开发要求使用**自己的 AppID**，游客模式（`touristappid`）用不了。
+> 云开发要在小程序自己的 AppID 下开通，游客模式不行。
 
-1. **换 AppID**：把 `project.config.json` 里的 `appid` 换成你的小程序 AppID。
+1. **确认 AppID**：`project.config.json` 里的 `appid` 得是这个小程序自己的 AppID。
 2. **开通云开发**：开发者工具顶部点「云开发」→ 开通 → 新建环境，复制**环境 ID**。
 3. **填环境 ID**：打开 `config/cloud.js`，把环境 ID 填进 `ENV`。
 4. **部署云函数**：在左侧文件树右键 `cloudfunctions/kitchen` → 
@@ -203,6 +220,22 @@ VW=620 VH=900 SUFFIX=-desktop node preview/shot.mjs
   真到极限时 `dc_orders` 只保留最近 100 单，购物车和收藏会自动清理失效条目。
 - 所有交互反馈（震动、Toast、Modal）都做了失败兜底，开发者工具里不会因为权限报错中断。
 - 代码遵循小程序的保守语法：不使用可选链 `?.` 与空值合并 `??`，避免基础库版本差异导致的编译失败。
+
+## 日常提交
+
+```bash
+git status                          # 先看改了哪些文件
+git add -A
+git commit -m "说明这次改了什么"
+git push
+```
+
+- 主分支是 `main`，和 GitHub 上一致，`git push` 不带参数就推到它。
+- 提交作者是 `Su1688 <147354184+Su1688@users.noreply.github.com>`。用的是 GitHub 的 noreply 邮箱，
+  不暴露真实邮箱，提交照样算进贡献图。
+- 推送到 GitHub 的用户名密码由 Git Credential Manager 保管，只会在第一次弹浏览器授权。
+- 换行符统一 LF（`git config core.autocrlf input`）。如果 `git status` 里冒出一堆你根本没动过的文件，
+  多半是编辑器把文件存成了 CRLF，先改回 LF 再提交，别把整个仓库都提交进去。
 
 ## 后续可以加
 
