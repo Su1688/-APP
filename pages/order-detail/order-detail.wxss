@@ -165,3 +165,27 @@
   font-size: 22rpx;
   text-align: center;
 }
+
+/* 大厨说的一句话，做成小纸条的样子 */
+.note {
+  position: relative;
+  margin-top: 24rpx;
+  padding: 26rpx 30rpx 26rpx 36rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #fff7ec 0%, #ffeade 100%);
+  color: #7a4a30;
+  font-size: 28rpx;
+  line-height: 1.6;
+  box-shadow: 0 8rpx 22rpx rgba(226, 160, 130, 0.16);
+}
+
+.note::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20rpx;
+  bottom: 20rpx;
+  width: 6rpx;
+  border-radius: 999rpx;
+  background: #ffb03a;
+}

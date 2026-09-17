@@ -36,6 +36,9 @@ function canSync() {
 
 function notifyError(err) {
   const code = err && err.code;
+  if (code !== "CLOUD_DISABLED") {
+    console.error("[kitchen] 云调用失败：", code || "", (err && err.message) || "", err);
+  }
   if (code === "NOT_PAIRED") {
     setKitchen(null);
     wx.showToast({ title: "小家断开了，去「我们的小家」重新配对", icon: "none" });
@@ -196,12 +199,12 @@ function submitOrder(payload) {
     });
 }
 
-function advanceOrder(id) {
+function advanceOrder(id, note) {
   if (!canSync()) {
-    return Promise.resolve(store.advanceOrder(id));
+    return Promise.resolve(store.advanceOrder(id, note));
   }
   return cloud
-    .call("orderAdvance", { id: id })
+    .call("orderAdvance", { id: id, note: note || "" })
     .then(function (res) {
       store.upsertOrder(res.order);
       return res.order;
@@ -228,12 +231,12 @@ function cancelOrder(id) {
     });
 }
 
-function urgeOrder(id) {
+function urgeOrder(id, note) {
   if (!canSync()) {
-    return Promise.resolve(store.urgeOrder(id));
+    return Promise.resolve(store.urgeOrder(id, note));
   }
   return cloud
-    .call("orderUrge", { id: id })
+    .call("orderUrge", { id: id, note: note || "" })
     .then(function (res) {
       store.upsertOrder(res.order);
       return res.order;

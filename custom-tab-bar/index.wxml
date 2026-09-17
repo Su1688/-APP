@@ -1,4 +1,4 @@
-<view class="tabbar">
+<view class="tabbar {{hide ? 'tabbar--hide' : ''}}">
   <view
     class="tab {{selected === index ? 'tab--on' : ''}}"
     wx:for="{{list}}"

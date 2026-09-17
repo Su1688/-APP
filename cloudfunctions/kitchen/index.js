@@ -362,6 +362,7 @@ async function createOrder(openid, event) {
     expectTime: text(event.expectTime, 20) || "尽快",
     status: "pending",
     urgeCount: 0,
+    notes: [],
     createdAt: now,
     updatedAt: now,
     timeline: [{ status: "pending", at: now }]
@@ -370,7 +371,17 @@ async function createOrder(openid, event) {
   return ok({ order: order });
 }
 
-async function orderAdvance(openid, id) {
+// 情话挂在订单上，这样两台手机看到的是同一句
+function appendNote(order, scene, value) {
+  const line = text(value, 40).trim();
+  const list = Array.isArray(order.notes) ? order.notes.slice() : [];
+  if (line) {
+    list.push({ scene: scene, text: line, at: Date.now() });
+  }
+  order.notes = list.slice(-20);
+}
+
+async function orderAdvance(openid, id, note) {
   const ctx = await loadOrder(openid, id);
   if (ctx.error) {
     return ctx.error;
@@ -384,6 +395,7 @@ async function orderAdvance(openid, id) {
   const now = Date.now();
   order.status = next;
   order.timeline = (order.timeline || []).concat([{ status: next, at: now }]);
+  appendNote(order, next === "cooking" ? "accept" : "done", note);
   order.updatedAt = now;
   await saveOrder(ctx.kitchenId, order);
   return ok({ order: order });
@@ -406,7 +418,7 @@ async function orderCancel(openid, id) {
   return ok({ order: order });
 }
 
-async function orderUrge(openid, id) {
+async function orderUrge(openid, id, note) {
   const ctx = await loadOrder(openid, id);
   if (ctx.error) {
     return ctx.error;
@@ -416,6 +428,7 @@ async function orderUrge(openid, id) {
     return ok({ order: order });
   }
   order.urgeCount = clamp((Number(order.urgeCount) || 0) + 1, 0, 99);
+  appendNote(order, "urge", note);
   order.updatedAt = Date.now();
   await saveOrder(ctx.kitchenId, order);
   return ok({ order: order });
@@ -464,11 +477,11 @@ exports.main = async (event) => {
       case "createOrder":
         return await createOrder(openid, event);
       case "orderAdvance":
-        return await orderAdvance(openid, event.id);
+        return await orderAdvance(openid, event.id, event.note);
       case "orderCancel":
         return await orderCancel(openid, event.id);
       case "orderUrge":
-        return await orderUrge(openid, event.id);
+        return await orderUrge(openid, event.id, event.note);
       case "saveProfile":
         return await saveProfile(openid, event.profile);
       default:

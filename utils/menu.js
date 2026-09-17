@@ -172,7 +172,7 @@ function getAll() {
   const deleted = getDeletedIds();
   const list = [];
   base.DISHES.forEach(function (origin) {
-    if (deleted.indexOf(origin.id) >= 0) {
+    if (deleted.indexOf(origin.id) >= 0 || origin.hidden) {
       return;
     }
     const dish = getDish(origin.id);
@@ -186,6 +186,22 @@ function getAll() {
     }
     const dish = getDish(item.id);
     if (dish) {
+      list.push(dish);
+    }
+  });
+  return list;
+}
+
+// 隐藏菜：只在搜索框打中特定词的时候出现，不参与菜单管理、统计和同步
+function getHidden() {
+  const deleted = getDeletedIds();
+  const list = [];
+  base.DISHES.forEach(function (origin) {
+    if (!origin.hidden || deleted.indexOf(origin.id) >= 0) {
+      return;
+    }
+    const dish = getDish(origin.id);
+    if (dish && !dish.soldOut) {
       list.push(dish);
     }
   });
@@ -308,6 +324,7 @@ module.exports = {
   getSpicyText: base.getSpicyText,
   getDish: getDish,
   getAll: getAll,
+  getHidden: getHidden,
   getStats: getStats,
   saveDish: saveDish,
   deleteDish: deleteDish,

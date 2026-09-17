@@ -2,6 +2,9 @@ const menu = require("../../utils/menu.js");
 const store = require("../../utils/store.js");
 const util = require("../../utils/util.js");
 const sync = require("../../utils/sync.js");
+const eggs = require("../../data/eggs.js");
+const moments = require("../../data/moments.js");
+const storage = require("../../utils/storage.js");
 
 const TIME_OPTIONS = ["尽快", "30 分钟后", "1 小时后", "晚饭时间"];
 const SPICY_TEXT = ["不辣", "微辣", "中辣", "特辣"];
@@ -30,13 +33,36 @@ Page({
     timeOptions: TIME_OPTIONS,
     timeIndex: 0,
     prefHint: "",
-    submitting: false
+    submitting: false,
+    canRoll: false,
+    rollShow: false,
+    rolling: false,
+    rollName: "",
+    rollDish: null,
+    hearts: [],
+    eggShow: false,
+    longPress: eggs.LONG_PRESS,
+    moment: null,
+    momentLines: []
   },
 
   onShow() {
     this.syncTabBar();
     this.refresh();
+    // 从纪念日菜单过来时，直接把购物车摊开
+    if (storage.read("dc_open_cart", false)) {
+      storage.write("dc_open_cart", false);
+      this.openCart();
+    }
     this.pullRemote(false);
+  },
+
+  onHide() {
+    this.stopRolling();
+  },
+
+  onUnload() {
+    this.stopRolling();
   },
 
   pullRemote(force) {
@@ -64,7 +90,7 @@ Page({
     }
     const bar = this.getTabBar();
     if (bar) {
-      bar.sync(0, store.pendingCount());
+      bar.sync(0, store.pendingCount(), this.data.showCart || this.data.rollShow);
     }
   },
 
@@ -73,6 +99,7 @@ Page({
     const cart = store.getCart();
     const cartMap = store.toCartMap(cart);
     const profile = store.getProfile();
+    const moment = moments.matchToday();
     this.setData({
       greet: util.greetByHour(new Date().getHours()),
       heroSub: profile.nick + "，今天想让大厨做点什么？",
@@ -81,7 +108,16 @@ Page({
       refineList: this.buildRefine(cartMap),
       cartItems: store.buildCartItems(cart),
       cartCount: store.cartCount(cart),
-      prefHint: this.buildPrefHint(profile)
+      prefHint: this.buildPrefHint(profile),
+      canRoll: this.buildRollPool().length > 0,
+      moment: moment,
+      momentLines: moments.lines(moment)
+    });
+  },
+
+  buildRollPool() {
+    return menu.getAll().filter(function (dish) {
+      return !dish.soldOut;
     });
   },
 
@@ -96,7 +132,7 @@ Page({
   filterDishes() {
     const category = this.data.activeCategory;
     const keyword = this.data.keyword.trim();
-    return menu.getAll().filter(function (dish) {
+    const list = menu.getAll().filter(function (dish) {
       if (category !== "all" && dish.category !== category) {
         return false;
       }
@@ -111,6 +147,21 @@ Page({
       }
       return true;
     });
+    return this.appendEggs(list, keyword);
+  },
+
+  // 搜索框里打中口令时，多摆一道平时不显示的菜
+  appendEggs(list, keyword) {
+    eggs.matchSearch(keyword).forEach(function (id) {
+      const dish = menu.getDish(id);
+      const exists = list.some(function (item) {
+        return item.id === id;
+      });
+      if (dish && !dish.soldOut && !exists) {
+        list.push(dish);
+      }
+    });
+    return list;
   },
 
   buildList(cartMap) {
@@ -215,15 +266,25 @@ Page({
     wx.navigateTo({ url: "/pages/dish-detail/dish-detail?id=" + e.detail.id });
   },
 
+  openMoment() {
+    const moment = this.data.moment;
+    if (!moment) {
+      return;
+    }
+    wx.navigateTo({ url: "/pages/moment/moment?id=" + moment.id });
+  },
+
   openCart() {
     if (this.data.cartCount === 0) {
       return;
     }
     this.setData({ showCart: true });
+    this.syncTabBar();
   },
 
   closeCart() {
     this.setData({ showCart: false });
+    this.syncTabBar();
   },
 
   onClearCart() {
@@ -252,6 +313,103 @@ Page({
     this.setData({ timeIndex: index, expectTime: TIME_OPTIONS[index] });
   },
 
+  openRoll() {
+    const pool = this.buildRollPool();
+    if (pool.length === 0) {
+      return;
+    }
+    this.setData({ rollShow: true, rolling: true, rollName: "", rollDish: null });
+    this.startRolling(pool);
+    this.syncTabBar();
+  },
+
+  startRolling(pool) {
+    const candidates = pool || this.buildRollPool();
+    if (candidates.length === 0) {
+      return;
+    }
+    const self = this;
+    this.stopRolling();
+    this._rollTick = setInterval(function () {
+      const dish = candidates[Math.floor(Math.random() * candidates.length)];
+      self.setData({ rollName: dish.name });
+    }, 70);
+    this._rollEnd = setTimeout(function () {
+      self.stopRolling();
+      const dish = candidates[Math.floor(Math.random() * candidates.length)];
+      self.setData({ rolling: false, rollDish: dish, rollName: dish.name });
+      wx.vibrateShort({ type: "medium", fail() {} });
+    }, 1000);
+  },
+
+  stopRolling() {
+    if (this._rollTick) {
+      clearInterval(this._rollTick);
+      this._rollTick = null;
+    }
+    if (this._rollEnd) {
+      clearTimeout(this._rollEnd);
+      this._rollEnd = null;
+    }
+  },
+
+  rollAgain() {
+    if (this._rollEnd) {
+      return;
+    }
+    this.setData({ rolling: true, rollDish: null });
+    this.startRolling();
+  },
+
+  closeRoll() {
+    this.stopRolling();
+    this.setData({ rollShow: false, rolling: false, rollDish: null, rollName: "" });
+    this.syncTabBar();
+  },
+
+  addRolled() {
+    const dish = this.data.rollDish;
+    if (!dish) {
+      return;
+    }
+    store.addToCart(dish.id);
+    this.vibrate();
+    this.closeRoll();
+    this.refresh();
+  },
+
+  onEgg() {
+    const emojis = ["❤️", "💕", "🌸", "💗"];
+    const hearts = [];
+    for (let i = 0; i < 14; i++) {
+      hearts.push({
+        key: "h" + Date.now() + "_" + i,
+        emoji: emojis[i % emojis.length],
+        left: Math.floor(Math.random() * 86) + 4,
+        delay: Math.round(Math.random() * 60) / 100,
+        size: 26 + Math.floor(Math.random() * 18)
+      });
+    }
+    const self = this;
+    this.setData({ hearts: hearts });
+    wx.vibrateShort({ type: "light", fail() {} });
+    if (this._heartTimer) {
+      clearTimeout(this._heartTimer);
+    }
+    this._heartTimer = setTimeout(function () {
+      self.setData({ hearts: [] });
+    }, 2200);
+  },
+
+  onHoldTitle() {
+    this.setData({ eggShow: true });
+    wx.vibrateShort({ type: "medium", fail() {} });
+  },
+
+  closeEgg() {
+    this.setData({ eggShow: false });
+  },
+
   submitOrder() {
     const cart = store.getCart();
     if (cart.length === 0) {
@@ -270,6 +428,17 @@ Page({
         expectTime: this.data.expectTime
       })
       .then(function (order) {
+        if (!order) {
+          // 别让订单悄悄消失：把失败摆到台面上
+          self.setData({ submitting: false });
+          wx.showModal({
+            title: "没提交成功",
+            content: "再点一次试试。还是不行的话，看开发者工具右下角「调试器 → Console」里的红色报错，把内容发给大厨。",
+            showCancel: false,
+            confirmText: "知道了"
+          });
+          return;
+        }
         self.setData({
           submitting: false,
           showCart: false,
@@ -277,9 +446,6 @@ Page({
           expectTime: TIME_OPTIONS[0],
           timeIndex: 0
         });
-        if (!order) {
-          return;
-        }
         store.clearCart();
         self.refresh();
         self.syncTabBar();

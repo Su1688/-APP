@@ -1,0 +1,61 @@
+<view class="page">
+  <block wx:if="{{moment}}">
+    <view class="hero">
+      <image
+        wx:if="{{moment.cover}}"
+        class="hero__cover"
+        src="{{moment.cover}}"
+        mode="aspectFill"
+        lazy-load
+      />
+      <view class="hero__body">
+        <view class="hero__badge">今天</view>
+        <view class="hero__title">{{moment.title}}</view>
+        <view class="hero__msg" wx:for="{{lines}}" wx:key="*this">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="section-title">
+      <view class="section-title__bar"></view>
+      <text>今天的菜单</text>
+    </view>
+
+    <dish-card
+      wx:for="{{list}}"
+      wx:key="id"
+      dish="{{item}}"
+      count="{{item.count}}"
+      bind:add="onAdd"
+      bind:minus="onMinus"
+      bind:tapdish="onOpenDish"
+    />
+
+    <empty-state
+      wx:if="{{list.length === 0}}"
+      emoji="🍽"
+      text="今天的菜单还是空的"
+      hint="跟大厨说一句，让他把菜配上"
+    />
+  </block>
+
+  <empty-state
+    wx:else
+    emoji="📅"
+    text="今天没有特别的菜单"
+    hint="回首页看看平常的菜单吧"
+  />
+</view>
+
+<view wx:if="{{cartCount > 0}}" class="orderbar" bindtap="goOrder">
+  <view class="orderbar__left">
+    <view class="orderbar__bubble">
+      <text class="orderbar__cart">🛒</text>
+      <text class="orderbar__badge">{{cartCount}}</text>
+    </view>
+    <view class="orderbar__text">
+      <view class="orderbar__title">已点 {{cartCount}} 份</view>
+      <view class="orderbar__tip">回首页填时间和备注</view>
+    </view>
+  </view>
+  <view class="orderbar__btn">去下单</view>
+</view>

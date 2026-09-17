@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "订单详情",
   "usingComponents": {
-    "empty-state": "/components/empty-state/index"
+    "empty-state": "/components/empty-state/index",
+    "note-picker": "/components/note-picker/index"
   }
 }

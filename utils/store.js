@@ -194,6 +194,7 @@ function createOrder(payload) {
     expectTime: payload.expectTime || "尽快",
     status: "pending",
     urgeCount: 0,
+    notes: [],
     createdAt: now,
     updatedAt: now,
     timeline: [{ status: "pending", at: now }]
@@ -275,7 +276,27 @@ function updateOrder(id, patch) {
   return null;
 }
 
-function advanceOrder(id) {
+function noteHistory(order, scene) {
+  const list = order && Array.isArray(order.notes) ? order.notes : [];
+  return list
+    .filter(function (note) {
+      return note && note.scene === scene;
+    })
+    .map(function (note) {
+      return note.text;
+    });
+}
+
+function appendNote(order, scene, value) {
+  const list = order && Array.isArray(order.notes) ? order.notes.slice() : [];
+  const line = (value || "").trim();
+  if (line) {
+    list.push({ scene: scene, text: line.slice(0, 40), at: Date.now() });
+  }
+  return list.slice(-20);
+}
+
+function advanceOrder(id, note) {
   const order = getOrder(id);
   if (!order) {
     return null;
@@ -287,7 +308,8 @@ function advanceOrder(id) {
   const now = Date.now();
   return updateOrder(id, {
     status: next,
-    timeline: order.timeline.concat([{ status: next, at: now }])
+    timeline: order.timeline.concat([{ status: next, at: now }]),
+    notes: appendNote(order, next === "cooking" ? "accept" : "done", note)
   });
 }
 
@@ -303,12 +325,15 @@ function cancelOrder(id) {
   });
 }
 
-function urgeOrder(id) {
+function urgeOrder(id, note) {
   const order = getOrder(id);
   if (!order) {
     return null;
   }
-  return updateOrder(id, { urgeCount: (order.urgeCount || 0) + 1 });
+  return updateOrder(id, {
+    urgeCount: (order.urgeCount || 0) + 1,
+    notes: appendNote(order, "urge", note)
+  });
 }
 
 function pendingCount() {
@@ -423,6 +448,7 @@ module.exports = {
   toggleFavorite: toggleFavorite,
   getOrders: getOrders,
   getOrder: getOrder,
+  noteHistory: noteHistory,
   createOrder: createOrder,
   updateOrder: updateOrder,
   advanceOrder: advanceOrder,

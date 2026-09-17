@@ -8,7 +8,9 @@
     "pages/order-detail/order-detail",
     "pages/menu-manage/menu-manage",
     "pages/dish-edit/dish-edit",
-    "pages/pair/pair"
+    "pages/pair/pair",
+    "pages/love-notes/love-notes",
+    "pages/moment/moment"
   ],
   "window": {
     "backgroundTextStyle": "light",

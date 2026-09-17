@@ -2,10 +2,26 @@
   <view class="hero">
     <view class="hero__text">
       <view class="hero__greet">{{greet}}</view>
-      <view class="hero__title">今天想吃什么？</view>
+      <view class="hero__title" bindlongpress="onHoldTitle">今天想吃什么？</view>
       <view class="hero__sub">{{heroSub}}</view>
     </view>
     <view class="hero__emoji">🍳</view>
+  </view>
+
+  <view wx:if="{{moment}}" class="moment" bindtap="openMoment">
+    <image
+      wx:if="{{moment.cover}}"
+      class="moment__cover"
+      src="{{moment.cover}}"
+      mode="aspectFill"
+      lazy-load
+    />
+    <view class="moment__body">
+      <view class="moment__badge">今天</view>
+      <view class="moment__title">{{moment.title}}</view>
+      <view class="moment__msg" wx:for="{{momentLines}}" wx:key="*this">{{item}}</view>
+      <view class="moment__go">看看今天的菜单 ›</view>
+    </view>
   </view>
 
   <view class="search">
@@ -19,6 +35,7 @@
       bindinput="onSearch"
     />
     <view wx:if="{{keyword}}" class="search__clear" bindtap="clearSearch">✕</view>
+    <view wx:if="{{canRoll}}" class="search__dice" bindtap="openRoll">🎲</view>
   </view>
 
   <scroll-view class="cats" scroll-x show-scrollbar="{{false}}">
@@ -51,6 +68,7 @@
       bind:add="onAdd"
       bind:minus="onMinus"
       bind:tapdish="onOpenDish"
+      bind:egg="onEgg"
     />
   </block>
 
@@ -67,6 +85,7 @@
     bind:add="onAdd"
     bind:minus="onMinus"
     bind:tapdish="onOpenDish"
+    bind:egg="onEgg"
   />
 
   <empty-state
@@ -135,5 +154,55 @@
   <view class="sheet__foot">
     <view class="sheet__total">共 {{cartItems.length}} 道菜 · {{cartCount}} 份</view>
     <view class="btn btn--primary sheet__submit" bindtap="submitOrder">告诉大厨 🍳</view>
+  </view>
+</view>
+
+<view wx:if="{{hearts.length > 0}}" class="hearts">
+  <text
+    class="heart"
+    wx:for="{{hearts}}"
+    wx:key="key"
+    style="left:{{item.left}}%;font-size:{{item.size}}rpx;animation-delay:{{item.delay}}s"
+  >{{item.emoji}}</text>
+</view>
+
+<view wx:if="{{rollShow}}" class="mask" bindtap="closeRoll"></view>
+
+<view class="sheet {{rollShow ? 'sheet--on' : ''}}">
+  <view class="sheet__head">
+    <text class="sheet__title">今天吃什么</text>
+    <text class="sheet__clear" bindtap="closeRoll">收起</text>
+  </view>
+
+  <view class="roll">
+    <view class="roll__name {{rolling ? 'roll__name--rolling' : ''}}">{{rollName}}</view>
+    <view wx:if="{{rolling}}" class="roll__desc">正在翻菜单……</view>
+    <block wx:else>
+      <view class="roll__desc ellipsis-2">{{rollDish.desc}}</view>
+      <view class="roll__meta">
+        <text class="chip" wx:for="{{rollDish.tags}}" wx:key="*this">{{item}}</text>
+        <text class="roll__min">⏱ {{rollDish.minutes}} 分钟</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="sheet__foot">
+    <view class="btn btn--plain" bindtap="rollAgain">再转一次</view>
+    <view class="btn btn--primary" bindtap="addRolled">就它了，加上 🍳</view>
+  </view>
+</view>
+
+<view wx:if="{{eggShow}}" class="egg" bindtap="closeEgg">
+  <view class="egg__card">
+    <image
+      wx:if="{{longPress.photo}}"
+      class="egg__photo"
+      src="{{longPress.photo}}"
+      mode="aspectFill"
+    />
+    <view wx:else class="egg__emoji">💌</view>
+    <view class="egg__title">{{longPress.title}}</view>
+    <view class="egg__text">{{longPress.text}}</view>
+    <view class="egg__hint">点一下收起</view>
   </view>
 </view>

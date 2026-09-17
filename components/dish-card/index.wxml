@@ -1,5 +1,5 @@
 <view class="dish {{dish.soldOut ? 'dish--soldout' : ''}}" wx:if="{{dish}}" bindtap="onTap">
-  <view class="dish__thumb">
+  <view class="dish__thumb" catchtap="onThumb">
     <image wx:if="{{dish.image}}" class="dish__thumb-img" src="{{dish.image}}" mode="aspectFill" lazy-load />
     <block wx:else>{{dish.emoji}}</block>
   </view>

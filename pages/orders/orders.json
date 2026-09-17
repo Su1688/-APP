@@ -2,6 +2,7 @@
   "navigationBarTitleText": "点菜记录",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "empty-state": "/components/empty-state/index"
+    "empty-state": "/components/empty-state/index",
+    "note-picker": "/components/note-picker/index"
   }
 }

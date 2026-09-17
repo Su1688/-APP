@@ -7,6 +7,8 @@
       <view class="hero__no">No.{{order.no}}</view>
     </view>
 
+    <view wx:if="{{noteText}}" class="note">{{noteText}}</view>
+
     <view wx:if="{{order.urgeCount > 0}}" class="urge-tip">
       已经催了 {{order.urgeCount}} 次，大厨看到啦 👀
     </view>
@@ -79,6 +81,13 @@
     <view class="actions__tip">
       {{isChef ? '做完记得在「我的」里切回小可爱身份哦' : '在「我的」里打开大厨模式，就能自己接单啦'}}
     </view>
+
+    <note-picker
+      show="{{pickerShow}}"
+      options="{{pickerOptions}}"
+      bind:select="onPickerSelect"
+      bind:close="onPickerClose"
+    />
   </view>
 </block>
 

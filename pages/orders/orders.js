@@ -2,6 +2,7 @@ const store = require("../../utils/store.js");
 const util = require("../../utils/util.js");
 const status = require("../../utils/status.js");
 const sync = require("../../utils/sync.js");
+const loveNotes = require("../../utils/love-notes.js");
 
 const TABS = [
   { id: "all", name: "全部" },
@@ -27,7 +28,10 @@ Page({
     counts: { pending: 0, cooking: 0, done: 0 },
     emptyEmoji: "🧾",
     emptyText: "还没有点过菜",
-    emptyHint: "去「点菜」页挑几道爱吃的吧"
+    emptyHint: "去「点菜」页挑几道爱吃的吧",
+    pickerShow: false,
+    pickerOptions: [],
+    pickerId: ""
   },
 
   onShow() {
@@ -61,7 +65,7 @@ Page({
     }
     const bar = this.getTabBar();
     if (bar) {
-      bar.sync(1, store.pendingCount());
+      bar.sync(1, store.pendingCount(), this.data.pickerShow);
     }
   },
 
@@ -105,8 +109,43 @@ Page({
     if (!next) {
       return;
     }
+    // 接单：先说一句再开做
+    if (next === "cooking") {
+      this.setData({
+        pickerId: id,
+        pickerShow: true,
+        pickerOptions: loveNotes.pickFew("accept", store.noteHistory(order, "accept"), 6)
+      });
+      this.syncTabBar();
+      return;
+    }
+    // 做好啦：自动来一句
+    this.runAdvance(id, loveNotes.pick("done", store.noteHistory(order, "done")));
+  },
+
+  onPickerClose() {
+    this.setData({ pickerShow: false, pickerOptions: [], pickerId: "" });
+    this.syncTabBar();
+  },
+
+  onPickerSelect(e) {
+    const id = this.data.pickerId;
+    const text = (e.detail && e.detail.text) || "";
+    this.setData({ pickerShow: false, pickerOptions: [], pickerId: "" });
+    this.syncTabBar();
+    if (id) {
+      this.runAdvance(id, text);
+    }
+  },
+
+  runAdvance(id, note) {
+    const order = store.getOrder(id);
+    if (!order) {
+      return;
+    }
+    const next = status.nextStatus(order.status);
     const self = this;
-    sync.advanceOrder(id).then(function (result) {
+    sync.advanceOrder(id, note).then(function (result) {
       if (!result) {
         return;
       }

@@ -1,6 +1,7 @@
 Component({
   data: {
     selected: 0,
+    hide: false,
     list: [
       { pagePath: "/pages/index/index", text: "点菜", icon: "🍽", badge: 0 },
       { pagePath: "/pages/orders/orders", text: "订单", icon: "🧾", badge: 0 },
@@ -10,9 +11,11 @@ Component({
   },
 
   methods: {
-    sync(selected, badge) {
+    // hide：弹层打开时把 tab 栏收起来，否则它会盖住弹层底部的按钮
+    sync(selected, badge, hide) {
       this.setData({
         selected: selected,
+        hide: !!hide,
         "list[1].badge": badge || 0
       });
     },

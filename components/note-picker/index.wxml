@@ -1,0 +1,22 @@
+<view wx:if="{{show}}" class="mask" catchtap="onClose">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet__head">
+      <view class="sheet__title">跟她说一句</view>
+      <view class="sheet__sub">选一句，她那边就能看到</view>
+    </view>
+
+    <view class="opts">
+      <view
+        class="opt"
+        wx:for="{{options}}"
+        wx:key="*this"
+        data-text="{{item}}"
+        bindtap="onPick"
+      >
+        {{item}}
+      </view>
+    </view>
+
+    <view class="btn btn--plain sheet__btn" bindtap="onSkip">不说了，直接开做</view>
+  </view>
+</view>

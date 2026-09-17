@@ -12,6 +12,10 @@
   box-shadow: 0 -6rpx 24rpx rgba(226, 160, 130, 0.1);
 }
 
+.tabbar--hide {
+  display: none;
+}
+
 .tab {
   flex: 1;
   display: flex;

@@ -96,6 +96,10 @@ Page({
     wx.navigateTo({ url: "/pages/menu-manage/menu-manage" });
   },
 
+  goLoveNotes() {
+    wx.navigateTo({ url: "/pages/love-notes/love-notes" });
+  },
+
   onChooseAvatar(e) {
     const tempPath = e.detail.avatarUrl;
     if (!tempPath) {

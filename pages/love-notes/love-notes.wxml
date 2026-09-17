@@ -1,0 +1,50 @@
+<view class="page">
+  <view class="intro">
+    <view class="intro__title">她看到的是你选中的那一句</view>
+    <view class="intro__text">接单时你先挑一句，做好啦会自动带一句，她催单时替你回一句。这里改的只影响这台手机上抽到的话；抽中之后跟着订单走，她那台就能看到。</view>
+  </view>
+
+  <view class="tabs">
+    <view
+      class="tab {{activeIndex === index ? 'tab--on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="id"
+      data-index="{{index}}"
+      bindtap="onTab"
+    >
+      <text class="tab__emoji">{{item.emoji}}</text>
+      <text>{{item.name}}</text>
+    </view>
+  </view>
+
+  <view class="hint">{{hint}}</view>
+
+  <view class="card lines">
+    <view class="line" wx:for="{{lines}}" wx:key="*this">
+      <text class="line__text flex-1">{{item}}</text>
+      <view class="line__del" data-text="{{item}}" bindtap="onRemove">✕</view>
+    </view>
+    <view wx:if="{{lines.length === 0}}" class="empty">这个场景还没话可说，加一句吧</view>
+  </view>
+
+  <view class="card add">
+    <input
+      class="add__input"
+      value="{{draft}}"
+      maxlength="40"
+      placeholder="写一句你自己的，比如「马上起锅」"
+      placeholder-class="add__ph"
+      confirm-type="done"
+      bindinput="onDraft"
+      bindconfirm="onAdd"
+    />
+    <view class="btn btn--primary add__btn" bindtap="onAdd">加上</view>
+  </view>
+
+  <view wx:if="{{customed}}" class="ops">
+    <view class="btn btn--plain ops__btn" bindtap="onResetScene">这个场景恢复内置</view>
+    <view class="btn btn--plain ops__btn" bindtap="onResetAll">全部恢复内置</view>
+  </view>
+
+  <view class="tip">心情不一样就换一批。写她听得懂的话，比任何模板都管用 💌</view>
+</view>

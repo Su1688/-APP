@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "今天特别一点",
+  "usingComponents": {
+    "dish-card": "/components/dish-card/index",
+    "empty-state": "/components/empty-state/index"
+  }
+}

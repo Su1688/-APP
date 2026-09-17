@@ -63,6 +63,14 @@
     <text class="switch-card__arrow">›</text>
   </view>
 
+  <view class="card switch-card switch-card--link" bindtap="goLoveNotes">
+    <view class="flex-1">
+      <view class="switch-card__title">情话管理</view>
+      <view class="switch-card__sub">接单、做好、催单时要说的那句话，可以自己改</view>
+    </view>
+    <text class="switch-card__arrow">›</text>
+  </view>
+
   <view class="section-title">
     <view class="section-title__bar"></view>
     <text>我的口味</text>

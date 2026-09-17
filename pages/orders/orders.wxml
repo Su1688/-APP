@@ -65,4 +65,11 @@
     text="{{emptyText}}"
     hint="{{emptyHint}}"
   />
+
+  <note-picker
+    show="{{pickerShow}}"
+    options="{{pickerOptions}}"
+    bind:select="onPickerSelect"
+    bind:close="onPickerClose"
+  />
 </view>
