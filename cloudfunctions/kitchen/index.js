@@ -14,6 +14,8 @@ const MAX_MEMBERS = 2;
 const ORDER_LIMIT = 100;
 const MAX_ITEMS = 30;
 const MAX_COUNT_PER_ITEM = 9;
+const MAX_FILE_IDS = 20;
+const MAX_FILE_ID_LENGTH = 200;
 const CODE_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 const FLOW = ["pending", "cooking", "done"];
 
@@ -453,6 +455,46 @@ async function saveProfile(openid, profile) {
   return ok({ profile: clean });
 }
 
+function fileIdList(value, envId) {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  // 只认本环境的 fileID，别让它变成任意文件的签名机
+  const prefix = envId ? "cloud://" + envId + "." : "cloud://";
+  const seen = {};
+  const out = [];
+  value.forEach(function (item) {
+    const id = text(item, MAX_FILE_ID_LENGTH);
+    if (!id || id.indexOf(prefix) !== 0 || seen[id]) {
+      return;
+    }
+    seen[id] = true;
+    if (out.length < MAX_FILE_IDS) {
+      out.push(id);
+    }
+  });
+  return out;
+}
+
+/**
+ * 云存储默认是「仅创建者可读写」，小程序端直接拿 fileID 渲染只会得到一块灰底；
+ * 云函数是管理员身份，换出来的 https 链接带签名，谁都能看 —— 你加菜时选的照片她才看得到。
+ */
+async function imageUrls(openid, rawList, envId) {
+  const fileList = fileIdList(rawList, envId);
+  if (fileList.length === 0) {
+    return ok({ urls: {} });
+  }
+  const res = await cloud.getTempFileURL({ fileList: fileList });
+  const urls = {};
+  ((res && res.fileList) || []).forEach(function (item) {
+    if (item && item.status === 0 && item.tempFileURL) {
+      urls[item.fileID] = item.tempFileURL;
+    }
+  });
+  return ok({ urls: urls });
+}
+
 exports.main = async (event) => {
   const wxContext = cloud.getWXContext();
   const openid = wxContext.OPENID;
@@ -484,6 +526,8 @@ exports.main = async (event) => {
         return await orderUrge(openid, event.id, event.note);
       case "saveProfile":
         return await saveProfile(openid, event.profile);
+      case "imageUrls":
+        return await imageUrls(openid, event.fileIds, wxContext.ENV);
       default:
         return fail("UNKNOWN_ACTION", "不认识这个操作");
     }

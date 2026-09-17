@@ -1,5 +1,6 @@
 const menu = require("../../utils/menu.js");
 const store = require("../../utils/store.js");
+const image = require("../../utils/image.js");
 
 const LEVEL_TEXT = ["", "简单", "中等", "有点挑战"];
 
@@ -40,6 +41,17 @@ Page({
       categoryName: menu.getCategoryName(dish.category)
     });
     wx.setNavigationBarTitle({ title: dish.name });
+    this.resolveImage(dish);
+  },
+
+  // 云图 fileID 换 https 链接；换不到就保持原值，别把封面弄丢
+  resolveImage(dish) {
+    const self = this;
+    image.resolve(dish.image).then(function (url) {
+      if (url && url !== dish.image) {
+        self.setData({ "dish.image": url });
+      }
+    });
   },
 
   onAdd() {

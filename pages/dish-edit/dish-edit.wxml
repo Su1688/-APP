@@ -8,7 +8,7 @@
     <view class="label__tip">拍一张你做的，她点单时看到的就是它</view>
 
     <view wx:if="{{form.image}}" class="photo">
-      <image class="photo__img" src="{{form.image}}" mode="aspectFill" />
+      <image class="photo__img" src="{{previewImage || form.image}}" mode="aspectFill" />
       <view class="photo__ops">
         <view class="photo__btn" bindtap="onPickImage">换一张</view>
         <view class="photo__btn photo__btn--danger" bindtap="onRemoveImage">删掉</view>
@@ -77,7 +77,7 @@
     <input
       class="input"
       value="{{form.desc}}"
-      maxlength="30"
+      maxlength="50"
       placeholder="比如「酸甜开胃，五分钟出锅」"
       placeholder-class="ph"
       bindinput="onDesc"

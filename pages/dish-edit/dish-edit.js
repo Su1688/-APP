@@ -43,6 +43,7 @@ Page({
     levelOptions: LEVEL_OPTIONS,
     tagOptions: [],
     cloudReady: image.cloudReady(),
+    previewImage: "",
     form: {
       image: "",
       emoji: "🍽",
@@ -93,6 +94,20 @@ Page({
     });
     this.originImage = dish.image || "";
     this.syncTagOptions(dish.tags);
+    this.refreshPreview();
+  },
+
+  // 预览用：云图 fileID 换成 https 链接再显示（存进菜里的还是原值）
+  refreshPreview() {
+    const self = this;
+    const value = this.data.form.image || "";
+    image.resolve(value).then(function (url) {
+      // 期间又换了图，这次结果作废
+      if (self.data.form.image !== value) {
+        return;
+      }
+      self.setData({ previewImage: url || "" });
+    });
   },
 
   syncTagOptions(selected) {
@@ -167,6 +182,7 @@ Page({
       .then(function (saved) {
         wx.hideLoading();
         self.replaceImage(saved);
+        self.refreshPreview();
       })
       .catch(function (err) {
         wx.hideLoading();
@@ -188,7 +204,7 @@ Page({
 
   onRemoveImage() {
     const current = this.data.form.image;
-    this.setData({ "form.image": "" });
+    this.setData({ "form.image": "", previewImage: "" });
     if (current && current !== this.originImage) {
       image.remove(current);
     }

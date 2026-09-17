@@ -167,6 +167,152 @@ function remove(value) {
   return Promise.resolve(false);
 }
 
+/**
+ * 渲染：把 cloud:// 的 fileID 换成 https 临时链接
+ *
+ * 为什么还要这一步：
+ * <image> 虽然支持直接写 fileID，但个别环境（开发者工具、老版本基础库）解析不出来，
+ * 结果就是一块灰底。渲染前统一换成 https 链接更稳，另外做个内存缓存，
+ * 免得每次刷新都去换一遍。
+ */
+const URL_TTL = 3600 * 1000;
+const urlCache = {};
+
+function cacheGet(fileID) {
+  const hit = urlCache[fileID];
+  if (!hit) {
+    return "";
+  }
+  if (hit.expireAt <= Date.now()) {
+    delete urlCache[fileID];
+    return "";
+  }
+  return hit.url;
+}
+
+function cacheSet(fileID, url, maxAge) {
+  // 云函数签发的链接不告诉我们 maxAge，保守按 30 分钟缓存
+  const seconds = Number(maxAge) > 0 ? Number(maxAge) : 1800;
+  // 留 5 分钟余量，避免链接刚上屏就过期
+  const ttl = Math.max(60, seconds - 300) * 1000;
+  urlCache[fileID] = {
+    url: url,
+    expireAt: Date.now() + Math.min(ttl, URL_TTL)
+  };
+}
+
+function uniqueFileIds(list) {
+  const seen = {};
+  const out = [];
+  list.forEach(function (value) {
+    if (isRemote(value) && !seen[value]) {
+      seen[value] = true;
+      out.push(value);
+    }
+  });
+  return out;
+}
+
+// 本地换链接：云存储是「仅创建者可读写」时通常会被拒，只当兜底
+function localUrls(fileIDs) {
+  return new Promise(function (resolve) {
+    if (typeof wx.cloud.getTempFileURL !== "function") {
+      resolve({});
+      return;
+    }
+    wx.cloud.getTempFileURL({
+      fileList: fileIDs,
+      success(res) {
+        const map = {};
+        ((res && res.fileList) || []).forEach(function (item) {
+          if (item && item.status === 0 && item.tempFileURL) {
+            map[item.fileID] = item.tempFileURL;
+          }
+        });
+        resolve(map);
+      },
+      fail() {
+        resolve({});
+      }
+    });
+  });
+}
+
+// 换不到就返回空表，调用方原样用旧值，不阻断渲染
+function loadUrls(fileIDs) {
+  return new Promise(function (resolve) {
+    if (!fileIDs.length || !cloudReady()) {
+      resolve({});
+      return;
+    }
+    // 先走云函数：管理员身份签发的链接带签名，绕开「仅创建者可读写」
+    cloud
+      .call("imageUrls", { fileIds: fileIDs })
+      .then(function (res) {
+        const urls = (res && res.urls) || {};
+        if (Object.keys(urls).length > 0) {
+          return urls;
+        }
+        return localUrls(fileIDs);
+      })
+      .catch(function () {
+        // 云函数还没部署 / 环境不可用，退回本地换链接
+        return localUrls(fileIDs);
+      })
+      .then(function (map) {
+        Object.keys(map).forEach(function (fileID) {
+          cacheSet(fileID, map[fileID]);
+        });
+        resolve(map);
+      });
+  });
+}
+
+// 单个地址：云图换 https，打包图 / 本地图原样返回
+function resolve(value) {
+  if (!isRemote(value)) {
+    return Promise.resolve(value);
+  }
+  const cached = cacheGet(value);
+  if (cached) {
+    return Promise.resolve(cached);
+  }
+  return loadUrls([value]).then(function (map) {
+    return map[value] || value;
+  });
+}
+
+// 列表：挨个换 image；没有需要换的就返回原数组（调用方靠 === 判断要不要 setData）
+function resolveList(list) {
+  if (!Array.isArray(list) || list.length === 0) {
+    return Promise.resolve(list);
+  }
+  const pending = [];
+  list.forEach(function (item) {
+    const value = item && item.image;
+    if (isRemote(value) && !cacheGet(value)) {
+      pending.push(value);
+    }
+  });
+  const ready = pending.length ? loadUrls(uniqueFileIds(pending)) : Promise.resolve({});
+  return ready.then(function (map) {
+    let changed = false;
+    const out = list.map(function (item) {
+      const value = item && item.image;
+      if (!isRemote(value)) {
+        return item;
+      }
+      const url = map[value] || cacheGet(value);
+      if (!url || url === value) {
+        return item;
+      }
+      changed = true;
+      return Object.assign({}, item, { image: url });
+    });
+    return changed ? out : list;
+  });
+}
+
 module.exports = {
   cloudReady: cloudReady,
   choose: choose,
@@ -174,5 +320,7 @@ module.exports = {
   remove: remove,
   isRemote: isRemote,
   isLocalFile: isLocalFile,
-  isBundled: isBundled
+  isBundled: isBundled,
+  resolve: resolve,
+  resolveList: resolveList
 };

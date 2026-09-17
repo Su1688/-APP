@@ -2,6 +2,7 @@ const menu = require("../../utils/menu.js");
 const store = require("../../utils/store.js");
 const storage = require("../../utils/storage.js");
 const moments = require("../../data/moments.js");
+const image = require("../../utils/image.js");
 
 function decorate(dish, cartMap) {
   const item = Object.assign({}, dish);
@@ -33,9 +34,21 @@ Page({
     store.dropInvalidCart();
     const cart = store.getCart();
     const cartMap = store.toCartMap(cart);
+    const list = this.buildList(cartMap);
     this.setData({
-      list: this.buildList(cartMap),
+      list: list,
       cartCount: store.cartCount(cart)
+    });
+    this.resolveImages(list);
+  },
+
+  // 云图 fileID 换 https 链接，换不到就保持原值
+  resolveImages(list) {
+    const self = this;
+    image.resolveList(list).then(function (next) {
+      if (next !== list) {
+        self.setData({ list: next });
+      }
     });
   },
 

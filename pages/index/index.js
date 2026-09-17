@@ -5,6 +5,7 @@ const sync = require("../../utils/sync.js");
 const eggs = require("../../data/eggs.js");
 const moments = require("../../data/moments.js");
 const storage = require("../../utils/storage.js");
+const image = require("../../utils/image.js");
 
 const TIME_OPTIONS = ["尽快", "30 分钟后", "1 小时后", "晚饭时间"];
 const SPICY_TEXT = ["不辣", "微辣", "中辣", "特辣"];
@@ -100,12 +101,14 @@ Page({
     const cartMap = store.toCartMap(cart);
     const profile = store.getProfile();
     const moment = moments.matchToday();
+    const list = this.buildList(cartMap);
+    const refineList = this.buildRefine(cartMap);
     this.setData({
       greet: util.greetByHour(new Date().getHours()),
       heroSub: profile.nick + "，今天想让大厨做点什么？",
       listTitle: this.buildTitle(),
-      list: this.buildList(cartMap),
-      refineList: this.buildRefine(cartMap),
+      list: list,
+      refineList: refineList,
       cartItems: store.buildCartItems(cart),
       cartCount: store.cartCount(cart),
       prefHint: this.buildPrefHint(profile),
@@ -113,6 +116,31 @@ Page({
       moment: moment,
       momentLines: moments.lines(moment)
     });
+    this.resolveImages(list, refineList);
+  },
+
+  // 菜里存的是云图 fileID，上屏前换成 https 链接，换不到就保持原值
+  resolveImages(list, refineList) {
+    const self = this;
+    const token = (this._imageToken || 0) + 1;
+    this._imageToken = token;
+    image
+      .resolveList(list)
+      .then(function (next) {
+        if (self._imageToken !== token) {
+          return null;
+        }
+        if (next !== list) {
+          self.setData({ list: next });
+        }
+        return image.resolveList(refineList);
+      })
+      .then(function (next) {
+        if (!next || self._imageToken !== token || next === refineList) {
+          return;
+        }
+        self.setData({ refineList: next });
+      });
   },
 
   buildRollPool() {
